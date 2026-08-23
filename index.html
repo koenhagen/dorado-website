@@ -1,0 +1,648 @@
+<!doctype html>
+<!--
+  DIRECTION CONTRACT — The Open Basin
+
+  THESIS: The vista is the product. One enormous open landscape at dawn holds
+    the whole offer; the interface is four weightless marks at the corners.
+    No closed canopy, and no section-stack of cards.
+  OWN-WORLD: Aerial perspective — every ridge lighter and bluer as it recedes.
+    Dawn blue #16324f to coral #e9a086 at the horizon, basin mist, river silver,
+    one gold spark where the city catches first light. Between vistas, a deep
+    teal-black #0b1517 with hairline rules and nothing on it. Sorts Mill Goudy at
+    vista scale over Jost micro-caps. No cards, no panels, no boxes.
+  STORY: There is a place out there. You reach it on foot, from your own street.
+  FIRST VIEWPORT: Full-bleed dawn basin between two forested bluffs. Mark at
+    top-left, nav and Join the beta at top-right, the region caption at
+    bottom-left, Supports Spotify/Strava at bottom-right. Dead centre:
+    eyebrow, headline, one line, and Listen to the demo.
+  FORM: Brief-pinned (portal.app). Motion: a dawn that lifts, mist that drifts,
+    and a gold waveform that moves with the live audio.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="manifest" href="/site.webmanifest"/>
+    <meta
+            name="description"
+            content="Dorado turns your own road into an open world you can hear. Listen to the demo, then join the beta."
+    />
+    <title>Dorado — Your run isn't just exercise. It's an expedition.</title>
+    <link rel="canonical" href="https://getdorado.app/"/>
+    <meta name="theme-color" content="#0b1517"/>
+
+    <!-- Social preview. og:image must be absolute for every scraper that
+         matters, so these carry the full domain rather than a root path. -->
+    <meta property="og:type" content="website"/>
+    <meta property="og:site_name" content="Dorado"/>
+    <meta property="og:locale" content="en"/>
+    <meta property="og:url" content="https://getdorado.app/"/>
+    <meta property="og:title" content="Dorado — Your run isn't just exercise. It's an expedition."/>
+    <meta
+            property="og:description"
+            content="Dorado turns your own road into an open world you can hear. Listen to the demo, then join the beta."
+    />
+    <meta property="og:image" content="https://getdorado.app/og.png"/>
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta
+            property="og:image:alt"
+            content="Dawn over an open jungle basin between two forested bluffs, with the Dorado wordmark above the far ridge."
+    />
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:title" content="Dorado — Your run isn't just exercise. It's an expedition."/>
+    <meta
+            name="twitter:description"
+            content="Dorado turns your own road into an open world you can hear. Listen to the demo, then join the beta."
+    />
+    <meta name="twitter:image" content="https://getdorado.app/og.png"/>
+
+    <link rel="stylesheet" href="./src/style.css"/>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+    <defs>
+        <!-- Dawn sky: cold at altitude, warm where the sun has not risen yet. -->
+        <linearGradient id="sky-dawn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#12293f"/>
+            <stop offset="24%" stop-color="#1f4a6b"/>
+            <stop offset="46%" stop-color="#417a99"/>
+            <stop offset="63%" stop-color="#7fadc0"/>
+            <stop offset="76%" stop-color="#c9b8ad"/>
+            <stop offset="86%" stop-color="#e9a086"/>
+            <stop offset="100%" stop-color="#f0bb95"/>
+        </linearGradient>
+        <linearGradient id="sky-noon" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2b5f7d"/>
+            <stop offset="40%" stop-color="#6ea3b6"/>
+            <stop offset="78%" stop-color="#bcd5d2"/>
+            <stop offset="100%" stop-color="#dfe8dc"/>
+        </linearGradient>
+        <linearGradient id="sky-dusk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0c1526"/>
+            <stop offset="30%" stop-color="#1d2745"/>
+            <stop offset="58%" stop-color="#46375a"/>
+            <stop offset="78%" stop-color="#8a4f54"/>
+            <stop offset="92%" stop-color="#c9743f"/>
+            <stop offset="100%" stop-color="#e0a05a"/>
+        </linearGradient>
+
+        <!-- The river takes its colour from whatever sky is above it. -->
+        <linearGradient id="water-dawn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#dcc3ad"/>
+            <stop offset="34%" stop-color="#9fb4bd"/>
+            <stop offset="100%" stop-color="#2c4753"/>
+        </linearGradient>
+        <linearGradient id="water-noon" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cfe0dd"/>
+            <stop offset="45%" stop-color="#8fb2b4"/>
+            <stop offset="100%" stop-color="#33555a"/>
+        </linearGradient>
+
+        <!-- Valley mist: an actual band of air, not a blur filter. -->
+        <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cddbdc" stop-opacity="0"/>
+            <stop offset="42%" stop-color="#d5e0de" stop-opacity="0.62"/>
+            <stop offset="100%" stop-color="#c3d3d3" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="haze-dusk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6b6079" stop-opacity="0"/>
+            <stop offset="46%" stop-color="#7d6b7e" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#5c5468" stop-opacity="0"/>
+        </linearGradient>
+
+        <!-- The shadowed far basin. It exists so the centre of the vista has a
+             dark passage for the headline to sit in — scene, not scrim. -->
+        <radialGradient id="basin-shade" cx="50%" cy="46%" r="62%">
+            <stop offset="0%" stop-color="#0a1a26" stop-opacity="0.5"/>
+            <stop offset="55%" stop-color="#0a1a26" stop-opacity="0.26"/>
+            <stop offset="100%" stop-color="#0a1a26" stop-opacity="0"/>
+        </radialGradient>
+    </defs>
+</svg>
+
+<!-- ============================ CHROME ============================ -->
+<header class="rim">
+    <a class="rim__mark" href="#top">
+        <img
+                class="rim__sun"
+                src="/android-chrome-192x192.png"
+                alt=""
+                aria-hidden="true"
+                width="192"
+                height="192"
+        />
+        <img
+                class="wordmark wordmark--rim"
+                src="./assets/logo-letters.svg"
+                alt="Dorado"
+        />
+    </a>
+
+    <nav class="rim__nav" aria-label="Sections">
+        <a href="#how">How it works</a>
+        <a href="#need">What you need</a>
+        <a class="rim__beta" href="#beta">Join the beta</a>
+    </nav>
+</header>
+
+<main id="top">
+    <!-- ============================== HERO ============================== -->
+    <section class="vista vista--hero">
+        <svg
+                class="vista__scene"
+                viewBox="0 0 1600 900"
+                preserveAspectRatio="xMidYMid slice"
+                role="img"
+                aria-label="Dawn over an open jungle basin, seen from a clearing between two forested bluffs. A river winds out of the far valley and a small gold city catches the first light on a distant spur."
+        >
+            <!-- Depth planes. Each drifts at its own rate (see startParallax);
+                 data-depth 0 is the far air, 1 is the ground at your feet and is
+                 the reference that does not move relative to the frame. The sky
+                 wash and the basin shading stay out of it — one is infinitely far
+                 away, the other is lighting rather than landscape. -->
+            <rect width="1600" height="900" fill="url(#sky-dawn)"/>
+
+            <g class="plane" data-depth="0.06">
+                <!-- dawn cloud, drawn as flattened banks rather than blurred blobs -->
+                <g class="cloud" opacity="0.62">
+                    <path d="M0 356c112-26 208 10 316-8 96-16 158-40 268-30 118 10 176 44 300 36 104-6 176-38 288-30 96 6 156 30 260 22 66-6 112-18 168-30v54c-64 12-116 24-186 28-108 6-166-18-262-24-114-8-186 26-292 32-124 8-182-26-300-36-110-10-172 14-268 30-108 18-204-18-316 8z"
+                          fill="#f3c3a4"/>
+                    <path d="M0 430c144-18 236 16 352 4 108-12 170-34 282-26 112 8 174 34 288 28 108-6 176-30 284-24 92 6 156 26 250 20 56-4 100-14 144-24v40c-52 12-98 22-158 26-100 6-160-14-250-20-108-6-176 18-284 24-114 6-176-20-288-28-112-8-174 14-282 26-116 12-208-22-352-4z"
+                          fill="#f7d3b6"/>
+                </g>
+                <!-- the sun has not cleared the far rim; this is its first bloom -->
+                <ellipse class="bloom" cx="860" cy="548" rx="330" ry="120" fill="#ffd9a8" opacity="0.34"/>
+            </g>
+
+            <!-- far range — palest, most air between it and the eye -->
+            <g class="plane" data-depth="0.18">
+                <path class="range range--far"
+                      d="M0 900V540l96-42 88 26 120-58 104 34 92-46 116 30 108-52 128 42 96-34 112 48 104-30 118 38 96-26 122 34 100-28v436z"
+                      fill="#8aa9b6"/>
+            </g>
+
+            <!-- second range, a step nearer and a step greener, carrying the city -->
+            <g class="plane" data-depth="0.34">
+                <path class="range range--mid"
+                      d="M0 900V614l110-34 92 22 108-44 118 30 96-36 124 26 100-40 116 34 104-24 122 40 98-28 118 32 94-22 100 26 100-24v418z"
+                      fill="#5f8791"/>
+                <!-- the city, on a spur across the basin. Small on purpose: it is the
+                     thing you are running toward, not the thing you have reached. -->
+                <g class="city" transform="translate(846 522)">
+                    <path d="M0 40h74v10H0z" fill="#4a6b6a"/>
+                    <path d="M8 30h58v10H8zM16 20h42v10H16zM24 12h26v8H24z" fill="#577875"/>
+                    <path d="M30 0h6v12h-6zM40 4h5v8h-5z" fill="#6b8a84"/>
+                    <g class="city__gold">
+                        <path d="M8 30h58v3H8zM16 20h42v3H16zM24 12h26v2H24zM30 0h6v3h-6z" fill="#f0c268"/>
+                    </g>
+                </g>
+            </g>
+
+            <!-- valley mist, sitting in the basin the way air actually does -->
+            <g class="plane" data-depth="0.48">
+                <rect class="haze haze--far" x="-200" y="556" width="2000" height="116" fill="url(#haze)"/>
+            </g>
+
+            <!-- the near jungle floor of the basin, and the river off it -->
+            <g class="plane" data-depth="0.62">
+                <path class="range range--near"
+                      d="M0 900V690l124-30 104 24 116-40 122 32 108-34 130 28 104-38 124 34 110-26 126 38 104-30 128 34 100-24 100 28v404z"
+                      fill="#35604d"/>
+                <path class="river"
+                      d="M842 660c-14 44-52 66-74 104-26 44-30 82-58 122-24 34-64 54-96 86-26 26-42 50-58 80h584c-24-38-58-62-92-96-38-38-56-70-82-112-24-38-42-62-52-104-8-32-8-56-12-80z"
+                      fill="url(#water-dawn)" opacity="0.9"/>
+            </g>
+
+            <!-- the two bluffs that frame the view, nearest and darkest -->
+            <g class="plane" data-depth="0.82">
+                <path class="bluff bluff--l" d="M0 900V214l58 40 74 78 66 44 82 96 58 62 74 96 62 96 46 74 34 100z"
+                      fill="#1f4438"/>
+                <path class="bluff bluff--l bluff--l2" d="M0 900V420l52 52 66 78 74 92 60 96 58 106 40 56z"
+                      fill="#16332b"/>
+                <path class="bluff bluff--r"
+                      d="M1600 900V182l-64 44-70 82-72 50-76 100-62 66-70 100-58 100-44 78-30 98z" fill="#1d4035"/>
+                <path class="bluff bluff--r bluff--r2" d="M1600 900V402l-56 56-70 82-70 96-58 100-54 108-38 56z"
+                      fill="#142f28"/>
+            </g>
+
+            <!-- the dark plain in front of the viewer: the reference plane -->
+            <g class="plane" data-depth="1">
+                <path class="plain"
+                      d="M0 900V806c118-16 208 8 320 2 128-6 200-28 330-22 122 6 190 26 314 22 128-4 200-26 326-20 116 6 190 24 310 18v200H0z"
+                      fill="#101d21"/>
+                <path class="plain plain--wet"
+                      d="M0 900V860c134-10 220 10 340 6 130-4 204-20 334-16 124 4 194 18 320 14 130-4 204-18 330-14 92 4 168 14 276 10v140H0z"
+                      fill="#0a1418"/>
+            </g>
+
+            <!-- shadowed basin behind the headline -->
+            <rect x="0" y="0" width="1600" height="900" fill="url(#basin-shade)"/>
+        </svg>
+
+        <div class="vista__stage">
+            <img
+                    class="wordmark wordmark--hero"
+                    src="./assets/logo-letters.svg"
+                    alt="Dorado"
+            />
+            <h1 class="display display--hero">Your run isn't just exercise. </h1>
+
+
+            <!-- Promise and action are one unit: the sentence is the reason to
+                 press the button, so they rise together and sit close. -->
+            <div class="vista__act">
+                <p class="vista__line">It's an expedition.</p>
+                <button type="button" class="listen" id="demo-open">Listen to our demo</button>
+            </div>
+            <p class="vista__micro"><span aria-hidden="true">🎧</span> Best experienced with earphones</p>
+        </div>
+
+        <p class="place">
+            <span class="place__name">Terra firme</span>
+            <span class="place__sub">
+            <span class="place__pin" aria-hidden="true">
+              <svg viewBox="0 0 12 16"><path
+                      d="M6 0a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6zm0 8.4A2.4 2.4 0 1 1 6 3.6a2.4 2.4 0 0 1 0 4.8z"/></svg>
+            </span>
+            Amazonas, Brazil
+          </span>
+        </p>
+
+        <p class="supports">
+            <span class="supports__word">Supports</span>
+            <span class="mark mark--spotify" role="img" aria-label="Spotify"></span>
+            <span class="mark mark--strava" role="img" aria-label="Strava"></span>
+        </p>
+    </section>
+
+    <!-- ============================= PURPOSE ============================= -->
+    <section class="ground ground--purpose">
+        <div class="wrap showcase" data-reveal>
+            <div class="showcase__copy">
+                <h2 class="display display--triplet">
+                    <span>Lace Up Sooner.</span>
+                    <span>Run Longer.</span>
+                    <span>Notice Neither.</span>
+                </h2>
+                <p class="showcase__text">
+                    Most fitness apps track your run. Dorado turns it into a journey. Explore a living world in your
+                    earphones, so your run stops being the thing you get through and becomes the
+                    thing you seek out.
+                </p>
+            </div>
+
+            <!--
+              APP SCREENSHOTS GO HERE.
+
+              Three phone frames at the real 19.5:9 ratio. All three screens are empty
+              and labelled as such; nothing here pretends to be a product shot.
+
+              To drop a real screenshot in, replace the span.shot__wait inside a
+              .shot with an image element:
+
+                  class="shot__img"  src="./screens/phone.png"  alt="…"
+
+              The frame, crop and corner radius are already handled by .shot__img.
+            -->
+            <div class="showcase__devices" data-reveal>
+                <div class="device device--aside">
+                    <div class="shot">
+                        <span class="shot__wait">Screen<br/>to come</span>
+                    </div>
+                    <span class="device__notch" aria-hidden="true"></span>
+                </div>
+                <div class="device device--lead">
+                    <div class="shot">
+                        <span class="shot__wait">Screen<br/>to come</span>
+                    </div>
+                    <span class="device__notch" aria-hidden="true"></span>
+                </div>
+                <div class="device device--aside">
+                    <div class="shot">
+                        <span class="shot__wait">Screen<br/>to come</span>
+                    </div>
+                    <span class="device__notch" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========================== HOW IT WORKS ===========================
+         One section, not two. The old numbered steps said the same thing at a
+         lower altitude; this vista now carries the whole explanation, led by
+         what the runner gets rather than by what the app has. -->
+    <section class="vista vista--how" id="how">
+        <svg
+                class="vista__scene"
+                viewBox="0 0 1600 900"
+                preserveAspectRatio="xMidYMid slice"
+                role="img"
+                aria-label="A wide river reach at midday, low green banks running out to a pale horizon."
+        >
+            <rect width="1600" height="900" fill="url(#sky-noon)"/>
+            <g class="plane" data-depth="0.2">
+                <path d="M0 900V470l128-24 108 16 122-30 116 22 104-26 128 20 110-30 124 26 106-22 130 18 108-28 118 24 100-18 98 22v460z"
+                      fill="#93b3ad"/>
+            </g>
+            <g class="plane" data-depth="0.34">
+                <rect x="-200" y="452" width="2000" height="96" fill="url(#haze)"/>
+            </g>
+            <g class="plane" data-depth="0.5">
+                <path d="M0 900V556l134-18 112 14 126-24 120 18 108-20 132 16 114-24 128 20 110-16 134 14 112-22 122 18 104-14 44 8v434z"
+                      fill="#5c8467"/>
+            </g>
+            <g class="plane" data-depth="0.68">
+                <path d="M0 900V632l140-14 118 12 130-18 124 14 112-16 136 12 118-18 132 16 114-12 138 10 116-16 126 14 108-10 88 6v420z"
+                      fill="#3d6a51"/>
+            </g>
+            <g class="plane" data-depth="0.85">
+                <path class="river"
+                      d="M0 900V722c186 22 320-6 486 4 178 10 268 44 448 40 176-4 274-34 446-30 84 2 152 10 220 20v144z"
+                      fill="url(#water-noon)"/>
+            </g>
+            <g class="plane" data-depth="1">
+                <path d="M0 900V846c168 14 296-8 458 0 174 8 262 30 438 26 172-4 268-22 438-18 96 2 172 8 266 14v140H0z"
+                      fill="#22443f"/>
+            </g>
+            <rect x="0" y="0" width="1600" height="900" fill="url(#basin-shade)" opacity="0.7"/>
+        </svg>
+
+        <div class="vista__stage">
+            <h2 class="display display--hero display--close">How it works</h2>
+
+            <!-- Feature name in micro-caps, benefit as the headline, mechanism in
+                 the prose. The tag keeps the benefit honest; the benefit keeps the
+                 tag from reading as a spec sheet. The story leads because it is
+                 the one that argues for the next run, not just this one. -->
+            <!-- Three stacked rows, the icon changing sides each time. Line art
+                 only, in the same thin-stroke gold as the rest of the marks —
+                 an icon here is a bullet, not an illustration. -->
+            <div class="feats" data-reveal>
+                <div class="beat">
+                    <span class="beat__icon" aria-hidden="true">
+                        <!-- a spiral: it does not end, and each pass goes deeper -->
+                        <svg viewBox="0 0 48 48">
+                            <path d="M8 24a16 16 0 0 1 32 0 12 12 0 0 1-24 0 8 8 0 0 1 16 0 4 4 0 0 1-8 0"/>
+                        </svg>
+                    </span>
+                    <div class="beat__body">
+                        <p class="beat__tag">Extensive story</p>
+                        <h3 class="display display--beat">A reason to run again</h3>
+                        <p class="beat__text">
+                            A persistent, ongoing story that you return to run after run. Pick up exactly where you left off.
+                        </p>
+                    </div>
+                </div>
+                <div class="beat">
+                    <span class="beat__icon" aria-hidden="true">
+                        <!-- you at the centre, the world arriving from both sides -->
+                        <svg viewBox="0 0 48 48">
+                            <circle class="dot" cx="24" cy="24" r="2.5"/>
+                            <path d="M16 17a10 10 0 0 0 0 14"/>
+                            <path d="M11 12a17 17 0 0 0 0 24"/>
+                            <path d="M32 17a10 10 0 0 1 0 14"/>
+                            <path d="M37 12a17 17 0 0 1 0 24"/>
+                        </svg>
+                    </span>
+                    <div class="beat__body">
+                        <p class="beat__tag">Spatial soundscape</p>
+                        <h3 class="display display--beat">Escape your own street</h3>
+                        <p class="beat__text">
+                            Sound is placed around you. Our 3D spatial audio puts you right in the jungle. Hear a birdcall above your left shoulder, a river that gets louder ahead.
+                        </p>
+                    </div>
+                </div>
+                <div class="beat">
+                    <span class="beat__icon" aria-hidden="true">
+                        <!-- a route that forks, and the point where you choose -->
+                        <svg viewBox="0 0 48 48">
+                            <path d="M10 42c4-7 9-9 12-16"/>
+                            <path d="M22 26c2-6 8-8 13-14"/>
+                            <path d="M22 26c4-3 10-3 16-2"/>
+                            <circle class="dot" cx="22" cy="26" r="2.5"/>
+                        </svg>
+                    </span>
+                    <div class="beat__body">
+                        <p class="beat__tag">Reactive narrative</p>
+                        <h3 class="display display--beat">You decide where it goes</h3>
+                        <p class="beat__text">
+                            Dictate where it goes by how you run. Run towards the mountains, or delve into a canyon. The
+                            world responds to your choices.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="place">
+            <span class="place__name">Igapó</span>
+            <span class="place__sub">
+            <span class="place__pin" aria-hidden="true">
+              <svg viewBox="0 0 12 16"><path
+                      d="M6 0a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6zm0 8.4A2.4 2.4 0 1 1 6 3.6a2.4 2.4 0 0 1 0 4.8z"/></svg>
+            </span>
+            Rio Negro, Brazil
+          </span>
+        </p>
+    </section>
+
+    <!-- ========================== WHAT YOU NEED ========================== -->
+    <section class="ground" id="need">
+        <div class="wrap" data-reveal>
+            <h2 class="display display--section">What you need</h2>
+            <div class="need" data-reveal>
+                <div class="need__col">
+                    <h3 class="need__head">What you need</h3>
+                    <ul class="need__list">
+                        <li>An iPhone or an Android phone</li>
+                        <li>Earphones, any pair with two ears to them</li>
+                        <li>A road you are thoroughly sick of</li>
+                    </ul>
+                </div>
+                <div class="need__col">
+                    <h3 class="need__head need__head--not">What you don't need</h3>
+                    <ul class="need__list need__list--not">
+                        <li><s>A smartwatch, a Garmin, a chest strap</s></li>
+                        <li><s>A training plan with weeks in it</s></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================= SPOTIFY & STRAVA ========================= -->
+    <section class="ground ground--alongside">
+        <div class="wrap wrap--narrow" data-reveal>
+            <p class="alongside__marks">
+                <span class="mark mark--lg mark--spotify" role="img" aria-label="Spotify"></span>
+                <span class="mark mark--lg mark--strava" role="img" aria-label="Strava"></span>
+            </p>
+            <h2 class="display display--section">It runs alongside, not instead</h2>
+            <p class="alongside__text">
+                Dorado is not a music player and not a run tracker, so it does not
+                ask you to give either of them up. Keep Spotify playing over the
+                top. Keep Strava recording underneath. Dorado is the part in
+                between, and all three run together on one phone.
+            </p>
+        </div>
+    </section>
+
+    <!-- ============================== BETA ============================== -->
+    <section class="vista vista--beta" id="beta">
+        <svg
+                class="vista__scene"
+                viewBox="0 0 1600 900"
+                preserveAspectRatio="xMidYMid slice"
+                role="img"
+                aria-label="The same basin at dusk. The ridges have gone to silhouette and the far city is lit."
+        >
+            <rect width="1600" height="900" fill="url(#sky-dusk)"/>
+            <g class="plane" data-depth="0.08">
+                <g class="cloud" opacity="0.4">
+                    <path d="M0 392c126-22 224 14 340-4 104-16 168-38 282-30 120 8 180 40 306 32 106-6 178-34 292-26 98 6 158 28 262 20 62-4 84-10 118-18v46c-40 10-64 18-124 22-104 6-164-14-258-20-114-8-186 20-292 26-126 8-186-24-306-32-114-8-178 14-282 30-116 18-214-18-338 4z"
+                          fill="#a86a63"/>
+                </g>
+                <ellipse class="bloom" cx="820" cy="600" rx="380" ry="130" fill="#e08a4a" opacity="0.3"/>
+            </g>
+            <g class="plane" data-depth="0.22">
+                <path d="M0 900V560l108-32 96 20 122-46 110 30 98-38 120 26 112-44 130 36 100-28 116 40 106-26 122 34 100-22 60 16 100-26v434z"
+                      fill="#3a3b56"/>
+            </g>
+            <g class="plane" data-depth="0.36">
+                <rect x="-200" y="578" width="2000" height="110" fill="url(#haze-dusk)"/>
+            </g>
+            <g class="plane" data-depth="0.44">
+                <g class="city city--lit" transform="translate(838 546)">
+                    <path d="M0 40h74v10H0zM8 30h58v10H8zM16 20h42v10H16zM24 12h26v8H24zM30 0h6v12h-6z" fill="#1b1c2e"/>
+                    <g class="city__gold">
+                        <path d="M10 33h8v4h-8zM24 33h8v4h-8zM38 33h8v4h-8zM52 33h8v4h-8zM20 23h8v4h-8zM34 23h8v4h-8zM48 23h8v4h-8zM28 15h8v3h-8zM40 15h8v3h-8zM30 2h6v4h-6z"
+                              fill="#ffce76"/>
+                    </g>
+                </g>
+            </g>
+            <g class="plane" data-depth="0.62">
+                <path d="M0 900V678l122-28 106 22 118-38 120 30 106-32 128 26 108-36 126 32 108-24 128 36 106-28 124 32 100-22 100 26v406z"
+                      fill="#20293a"/>
+            </g>
+            <g class="plane" data-depth="0.84">
+                <path d="M0 900V214l58 40 74 78 66 44 82 96 58 62 74 96 62 96 46 74 34 100z" fill="#0c1420"/>
+                <path d="M1600 900V182l-64 44-70 82-72 50-76 100-62 66-70 100-58 100-44 78-30 98z" fill="#0b1220"/>
+            </g>
+            <g class="plane" data-depth="1">
+                <path d="M0 900V800c122-14 212 8 326 2 130-6 202-26 332-20 124 6 192 24 316 20 130-4 202-24 328-18 118 6 190 22 298 16v200H0z"
+                      fill="#070c14"/>
+            </g>
+            <rect x="0" y="0" width="1600" height="900" fill="url(#basin-shade)" opacity="0.8"/>
+        </svg>
+
+        <div class="vista__stage">
+            <h2 class="display display--hero display--close">Join the beta</h2>
+            <p class="vista__line">
+                Dorado is still being built. Leave your email, and we send you one
+                message, on the day the beta opens.
+            </p>
+
+            <ul class="promise">
+                <li>Available on iPhone and Android</li>
+                <li>No newsletter, no other post</li>
+            </ul>
+
+            <form class="signup" id="beta-form" novalidate>
+                <label class="signup__label" for="beta-email">Email address</label>
+                <div class="signup__row">
+                    <input
+                            class="signup__input"
+                            id="beta-email"
+                            name="email"
+                            type="email"
+                            inputmode="email"
+                            autocomplete="email"
+                            placeholder="you@example.com"
+                            required
+                            aria-describedby="beta-error"
+                    />
+                    <button type="submit" class="signup__submit">Join the beta</button>
+                </div>
+                <p class="signup__error" id="beta-error" role="alert" hidden></p>
+            </form>
+
+            <p class="signup__done" id="beta-done" hidden>
+                You are on the list. We will send the download link the day the beta
+                opens, and nothing else until then.
+            </p>
+        </div>
+
+        <p class="place">
+            <span class="place__name">Yungas</span>
+            <span class="place__sub">
+            <span class="place__pin" aria-hidden="true">
+              <svg viewBox="0 0 12 16"><path
+                      d="M6 0a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6zm0 8.4A2.4 2.4 0 1 1 6 3.6a2.4 2.4 0 0 1 0 4.8z"/></svg>
+            </span>
+            Andes, Bolivia
+          </span>
+        </p>
+    </section>
+</main>
+
+<footer class="foot">
+    <img
+            class="wordmark wordmark--foot"
+            src="./assets/logo-letters.svg"
+            alt="Dorado"
+    />
+    <p class="foot__note">
+        Pre-launch
+    </p>
+</footer>
+
+<!-- ============================= THE DEMO ============================= -->
+<div class="demo" id="demo-overlay" aria-labelledby="demo-title" hidden>
+    <div class="demo__scrim" id="demo-scrim"></div>
+
+    <div class="demo__panel">
+        <header class="demo__head">
+            <div>
+                <p class="eyebrow">Demo</p>
+            </div>
+            <button type="button" class="demo__close" id="demo-close" aria-label="Close the demo">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 5l14 14M19 5L5 19"/>
+                </svg>
+            </button>
+        </header>
+
+        <!-- The line. The only instrument in the demo: one gold trace straight
+             off the analyser, flat when nothing is playing. -->
+        <div class="wave">
+            <canvas class="wave__canvas" id="demo-waveform" role="img"
+                    aria-label="Live waveform of the demo audio"></canvas>
+        </div>
+
+        <!-- The recording. Swap the file here; nothing else needs to change. -->
+        <audio id="demo-audio" preload="auto" src="/audio/demo-placeholder.wav"></audio>
+
+        <div class="demo__transport">
+            <button type="button" class="demo__play" id="demo-toggle" data-overlay-focus>
+                <span data-play-label>Play</span>
+            </button>
+            <p class="demo__now" id="demo-now"><span aria-hidden="true">🎧</span> Best experienced with earphones</p>
+            <div class="demo__meter" aria-hidden="true"><span id="demo-meter"></span></div>
+        </div>
+
+        <div class="demo__after" id="demo-after" hidden>
+            <p>That was one evening in one region.</p>
+            <a class="demo__cta" id="demo-to-beta" href="#beta">Join the beta</a>
+            <button type="button" class="demo__again" id="demo-again">Play it again</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

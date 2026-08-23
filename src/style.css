@@ -1,0 +1,1251 @@
+@import './fonts.css';
+
+/* ==========================================================================
+   DORADO — THE OPEN BASIN
+   Aerial perspective: everything gets lighter and bluer as it recedes. The
+   vistas carry the page; between them the ground goes to teal-black and holds
+   nothing but hairlines. No cards, no panels, no boxes anywhere.
+   ========================================================================== */
+
+/* The three properties main.ts writes at runtime, declared here so they have a
+   type and a resting value in the stylesheet rather than existing only as a
+   `setProperty` call in the script. Every `var()` below keeps its fallback, so
+   a browser without @property support (Firefox before 128) behaves the same.
+
+   --fill inherits because the meter is set on the track and read by the bar
+   inside it; the other two are set and read on the same element. */
+@property --par {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --hold {
+  syntax: '<time>';
+  inherits: false;
+  initial-value: 0ms;
+}
+
+@property --fill {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  /* the ground between vistas */
+  --ink: #0b1517;
+  --ink-lift: #101d1f;
+
+  /* light on that ground */
+  --paper: #eef3ee;
+  --paper-dim: #a9bcb6;
+  --paper-faint: #7d938e;
+
+  /* first light */
+  --gold: #e6b35c;
+  --gold-deep: #a97a2c;
+
+  /* hairlines — the only structural device on this page */
+  --hair: rgba(184, 205, 199, 0.22);
+  --hair-strong: rgba(184, 205, 199, 0.42);
+
+  /* legibility over a vista, always shadow rather than a plate */
+  --lift-1: 0 1px 2px rgba(6, 16, 20, 0.55), 0 2px 18px rgba(6, 16, 20, 0.45);
+  --lift-2: 0 2px 4px rgba(6, 16, 20, 0.6), 0 4px 40px rgba(6, 16, 20, 0.55);
+
+  --display: 'Sorts Mill Goudy', 'Hoefler Text', Georgia, serif;
+  --body: Faustina, Georgia, 'Times New Roman', serif;
+  --micro: Jost, 'Futura', 'Century Gothic', system-ui, sans-serif;
+
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --rhythm: clamp(4.5rem, 11vw, 10rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  font-weight: 300;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+/* ============================== TYPE ============================== */
+
+.display {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: 0.004em;
+  text-wrap: balance;
+}
+
+.display--hero {
+  font-size: clamp(2.6rem, 7.2vw, 6rem);
+  color: #fff;
+  text-shadow: var(--lift-2);
+}
+
+.display--close {
+  font-size: clamp(2.1rem, 5.2vw, 4.2rem);
+}
+
+.display--section {
+  font-size: clamp(1.9rem, 4vw, 3.1rem);
+  color: var(--paper);
+}
+
+.display--beat {
+  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
+  color: #fff;
+  text-shadow: var(--lift-1);
+}
+
+.display--demo {
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  color: var(--paper);
+}
+
+/* The one tracked label in the system. It names a place or a duration and
+   appears three times on the page — a kicker, not a grammar. */
+.eyebrow {
+  margin: 0 0 clamp(1rem, 2vw, 1.6rem);
+  font-family: var(--micro);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: var(--lift-1);
+}
+
+/* ============================== CHROME ============================== */
+
+.rim {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1rem, 2.2vw, 1.9rem) var(--gutter) clamp(2.5rem, 5vw, 4rem);
+  /* Just enough air darkening to hold the marks over a bright dawn. */
+  background: linear-gradient(180deg, rgba(6, 16, 20, 0.5) 0%, rgba(6, 16, 20, 0.22) 46%, rgba(6, 16, 20, 0) 100%);
+  pointer-events: none;
+}
+
+.rim > * {
+  pointer-events: auto;
+}
+
+.rim__mark {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+/* The app icon, at the size of a mark. Same image the tab and the home
+   screen show, so the corner of the page and the icon you tap agree. */
+.rim__sun {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+}
+
+/* The carved wordmark. One asset, three sizes — the only thing on the page
+   that spells the name, so it is always set by height and never re-typed. */
+.wordmark {
+  display: block;
+  width: auto;
+  user-select: none;
+}
+
+.wordmark--rim {
+  height: 20px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.wordmark--foot {
+  height: 22px;
+  opacity: 0.72;
+}
+
+.rim__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.1rem, 2.4vw, 2.4rem);
+}
+
+.rim__nav a {
+  font-family: var(--micro);
+  font-size: 0.82rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.86);
+  text-decoration: none;
+  text-shadow: var(--lift-1);
+  transition: color 220ms ease;
+}
+
+.rim__nav a:hover {
+  color: var(--gold);
+}
+
+/* Top-right, and it stays there the whole way down the page. */
+.rim__nav a.rim__beta {
+  padding: 0.6rem 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: border-color 220ms ease, background 220ms ease, color 220ms ease;
+}
+
+.rim__nav a.rim__beta:hover {
+  color: #10181a;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+@media (max-width: 52rem) {
+  .rim__nav a:not(.rim__beta) {
+    display: none;
+  }
+}
+
+/* ============================== VISTAS ============================== */
+
+.vista {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(7rem, 14vh, 11rem) var(--gutter) clamp(6rem, 12vh, 9rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Oversized on purpose. The scene drifts vertically against the scroll (--par,
+   set per frame in main.ts), and the extra 14% top and bottom is the travel
+   budget — so no amount of drift can lift the artwork off an edge and show the
+   section behind it. */
+.vista__scene {
+  position: absolute;
+  top: -14%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 128%;
+  z-index: -1;
+  transform: translate3d(0, var(--par, 0px), 0);
+  will-change: transform;
+}
+
+/* A depth plane inside a scene. main.ts writes its transform directly; this
+   only asks the compositor to expect it. */
+.plane {
+  will-change: transform;
+}
+
+.vista__stage {
+  position: relative;
+  width: 100%;
+  max-width: 62rem;
+  text-align: center;
+}
+
+.vista--hero .vista__stage {
+  max-width: 54rem;
+}
+
+.vista__line {
+  margin: clamp(1rem, 2vw, 1.5rem) auto 0;
+  max-width: 34ch;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: var(--lift-1);
+}
+
+/* Line and button rise as one block, but they do not sit at one distance: the
+   line finishes the headline's sentence, so it stays close to it, and the
+   button is held well clear of both. */
+.vista__act {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2rem, 4vw, 3rem);
+  margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+}
+
+.vista__act .vista__line {
+  margin: 0 auto;
+}
+
+.vista__micro {
+  margin: 1rem 0 0;
+  font-family: var(--micro);
+  font-size: 0.76rem;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  text-shadow: var(--lift-1);
+}
+
+/* The primary action, dead centre of the vista. Solid ivory so it reads as the
+   one lit thing in the frame rather than another translucent overlay. */
+.listen {
+  padding: 1.05rem 2.6rem;
+  font-family: var(--micro);
+  font-size: clamp(0.82rem, 1.3vw, 0.92rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #101c1e;
+  background: #f2ece2;
+  border: 1px solid #f2ece2;
+  cursor: pointer;
+  box-shadow: 0 16px 50px -20px rgba(6, 16, 20, 0.9);
+  transition: background 220ms ease, border-color 220ms ease, transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms ease;
+}
+
+.listen:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 22px 60px -20px rgba(6, 16, 20, 0.95);
+}
+
+.listen:active {
+  transform: translateY(0);
+}
+
+/* Supports Spotify / Strava — bottom-right corner mark on the hero. */
+.supports {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(2rem, 5vh, 3.5rem);
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin: 0;
+}
+
+.supports__word {
+  font-family: var(--micro);
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+  text-shadow: var(--lift-1);
+}
+
+/* The two logos are monotone masks, so they sit in this world's light instead
+   of importing two other brands' colour into the frame. */
+.mark {
+  display: block;
+  width: 86px;
+  height: 26px;
+  background-color: rgba(255, 255, 255, 0.8);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.mark--spotify {
+  -webkit-mask-image: url('../assets/Spotify_logo_with_text.svg');
+  mask-image: url('../assets/Spotify_logo_with_text.svg');
+}
+
+.mark--strava {
+  width: 74px;
+  -webkit-mask-image: url('../assets/Strava_Logo.svg');
+  mask-image: url('../assets/Strava_Logo.svg');
+}
+
+.mark--lg {
+  width: 148px;
+  height: 42px;
+  background-color: var(--paper-dim);
+}
+
+.mark--lg.mark--strava {
+  width: 124px;
+}
+
+/* ---- the two bottom corners ---- */
+
+.place {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(2rem, 5vh, 3.5rem);
+  margin: 0;
+  text-align: left;
+}
+
+.place__name {
+  display: block;
+  font-family: var(--micro);
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: #fff;
+  text-shadow: var(--lift-1);
+}
+
+.place__sub {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  font-family: var(--micro);
+  font-size: 0.74rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.74);
+  text-shadow: var(--lift-1);
+}
+
+.place__pin svg {
+  display: block;
+  width: 9px;
+  height: 12px;
+  fill: var(--gold);
+}
+
+/* Below this the corners get too tight to hold marks, so the region caption
+   drops. Supports does not — it is a claim about the product, not decoration —
+   so it rejoins the flow and centres under the hero stack. */
+@media (max-width: 46rem) {
+  .place {
+    display: none;
+  }
+
+  .supports {
+    position: static;
+    justify-content: center;
+    margin-top: clamp(1.4rem, 4vw, 2rem);
+  }
+
+  /* With the mark back in the flow, the hero's deep bottom padding is no
+     longer holding anything off the edge — it just strands the mark above a
+     band of empty ground. The top padding stays: the fixed rim needs it. */
+  .vista--hero {
+    padding-bottom: clamp(2rem, 5vh, 3rem);
+  }
+}
+
+/* ---- scene motion: a dawn that lifts ---- */
+
+.cloud {
+  animation: drift 90s ease-in-out infinite alternate;
+}
+
+.haze,
+.haze--far {
+  animation: drift 64s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-1.6%);
+  }
+  to {
+    transform: translateX(1.6%);
+  }
+}
+
+.bloom {
+  animation: breathe 14s ease-in-out infinite alternate;
+  transform-origin: center;
+}
+
+@keyframes breathe {
+  from {
+    opacity: 0.26;
+  }
+  to {
+    opacity: 0.44;
+  }
+}
+
+.city__gold {
+  animation: catch 9s ease-in-out infinite alternate;
+}
+
+@keyframes catch {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The authored moment: on arrival the whole scene settles down into place and
+   the copy rises out of the basin. Once, on load, exponential ease-out. */
+.vista--hero .vista__scene {
+  animation: settle 1900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Uses the standalone `scale` property, not transform: scale() — transform is
+   the parallax's, and these two have to compose rather than overwrite. */
+@keyframes settle {
+  from {
+    scale: 1.06;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+.vista--hero .vista__stage > * {
+  animation: rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* In the hero the wordmark stands in for the kicker, so it inherits the
+   kicker's slot in the rise sequence and its bottom margin. */
+.wordmark--hero {height: clamp(2.55rem, 6vw, 4.2rem);
+  margin: 0 auto clamp(0.6rem, 1.4vw, 1.2rem);
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+}
+
+.vista--hero .wordmark--hero {
+  animation-delay: 180ms;
+}
+.vista--hero .display--hero {
+  animation-delay: 300ms;
+}
+/* Line and button rise as one block now, so the sequence loses a beat. */
+.vista--hero .vista__act {
+  animation-delay: 440ms;
+}
+.vista--hero .vista__micro {
+  animation-delay: 560ms;
+}
+.vista--hero .supports {
+  animation-delay: 660ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Scroll reveals. The held state is what main.ts adds and then takes away, so
+   the resting state of every element is "visible" — no script, no problem. */
+.is-held {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+[data-reveal] > * {
+  transition: opacity 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--hold, 0ms),
+    transform 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--hold, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ============================== GROUND ============================== */
+
+.ground {
+  padding: var(--rhythm) var(--gutter);
+  background: var(--ink);
+}
+
+.ground--purpose {
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-lift) 100%);
+}
+
+.ground--alongside {
+  background: var(--ink-lift);
+  text-align: center;
+}
+
+.wrap {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.wrap--narrow {
+  max-width: 44rem;
+}
+
+/* ---- how it works ---- */
+
+.vista--how .vista__stage {
+  max-width: 68rem;
+}
+
+/* Three beats stacked, each one leaning to the opposite side of the stage.
+   The alternation is what makes them read as three separate things without a
+   card or a rule around any of them. */
+.feats {
+  display: grid;
+  gap: clamp(2.75rem, 6vw, 4.5rem);
+  margin-top: clamp(3rem, 6vw, 5rem);
+  text-align: left;
+}
+
+.beat {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 54rem) {
+  /* Odd rows sit left, even rows sit right, and the icon always leads on the
+     outside edge — so the eye zig-zags down instead of running a straight
+     column past three paragraphs. */
+  .beat {
+    max-width: 46rem;
+  }
+
+  .beat:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin-left: auto;
+  }
+
+  .beat:nth-child(even) .beat__icon {
+    order: 2;
+  }
+}
+
+.beat__icon {
+  display: block;
+  width: clamp(2.75rem, 6vw, 4.25rem);
+}
+
+.beat__icon svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 3px rgba(6, 16, 20, 0.5));
+}
+
+.beat__icon .dot {
+  fill: var(--gold);
+  stroke: none;
+}
+
+/* The feature name, kept small so the benefit above the prose is what carries
+   the beat. Same tracked micro-caps as every other label in the system. */
+.beat__tag {
+  margin: 0 0 clamp(0.5rem, 1vw, 0.8rem);
+  font-family: var(--micro);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow: var(--lift-1);
+}
+
+.beat__text {
+  margin: clamp(0.9rem, 1.6vw, 1.2rem) 0 0;
+  max-width: 36ch;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  color: rgba(255, 255, 255, 0.93);
+  text-shadow: var(--lift-1);
+}
+
+/* ---- what you need ---- */
+
+.need {
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--hair-strong);
+}
+
+@media (min-width: 54rem) {
+  .need {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.need__head {
+  margin: 0 0 1.2rem;
+  font-family: var(--micro);
+  font-size: 0.74rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.need__head--not {
+  color: var(--paper-faint);
+}
+
+.need__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.need__list li {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--hair);
+  font-family: var(--display);
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  line-height: 1.35;
+}
+
+/* Struck through, because the point is that these are things you can put
+   down — not things Dorado is missing. */
+.need__list--not li {
+  color: var(--paper-faint);
+}
+
+.need__list--not s {
+  text-decoration: line-through;
+  text-decoration-color: var(--gold-deep);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0;
+}
+
+/* ---- purpose ---- */
+
+/* Copy on the left, the app on the right. The one place on the page where
+   Dorado itself is the subject rather than the country it takes place in. */
+.showcase {
+  display: grid;
+  gap: clamp(3rem, 7vw, 6rem);
+  align-items: center;
+}
+
+@media (min-width: 62rem) {
+  .showcase {
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    gap: clamp(3rem, 7vw, 7rem);
+  }
+}
+
+/* Three beats, one per line, each landing on its own full stop. The line
+   breaks are the sentence structure here, so they are marked up, not wrapped. */
+.display--triplet span {
+  display: block;
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  line-height: 1.14;
+  color: var(--paper);
+}
+
+.showcase__text {
+  margin: clamp(1.8rem, 3vw, 2.4rem) 0 0;
+  max-width: 46ch;
+  font-size: clamp(1.02rem, 1.5vw, 1.15rem);
+  color: var(--paper-dim);
+}
+
+/* ---- the devices ---- */
+
+/* Phones only. Phone and headphones is the entire requirement, so a tablet or
+   laptop frame here would be selling a build that does not exist. */
+.showcase__devices {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.6rem, 1.8vw, 1.4rem);
+}
+
+.device {
+  position: relative;
+  flex: 0 1 auto;
+  aspect-ratio: 9 / 19.5;
+  padding: 0.4rem;
+  border-radius: 22px;
+  background: #060d0f;
+  border: 1px solid rgba(184, 205, 199, 0.34);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.9);
+}
+
+/* The middle one stands forward; the outer two step back, which is the only
+   depth cue in the group and reads without any perspective trickery. */
+.device--lead {
+  width: clamp(9.5rem, 30%, 15rem);
+  z-index: 2;
+}
+
+.device--aside {
+  width: clamp(8rem, 25%, 12.5rem);
+  border-color: rgba(184, 205, 199, 0.22);
+  opacity: 0.78;
+}
+
+@media (max-width: 44rem) {
+  .device--aside:last-child {
+    display: none;
+  }
+
+  .device--lead {
+    width: clamp(10rem, 40%, 14rem);
+  }
+}
+
+.device__notch {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(184, 205, 199, 0.28);
+}
+
+/* The screen itself. Empty and saying so — a labelled hole, never a fake
+   product shot. Swap .shot__wait for an img.shot__img when a real one exists. */
+.shot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: linear-gradient(168deg, #14262b 0%, #0d1a1e 58%, #0a1417 100%);
+}
+
+.device .shot {
+  border-radius: 18px;
+}
+
+.shot__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shot__wait {
+  font-family: var(--micro);
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.24em;
+  line-height: 1.8;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--paper-faint);
+}
+
+/* ---- alongside ---- */
+
+.alongside__marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+}
+
+.alongside__text {
+  margin: 1.4rem auto 0;
+  max-width: 52ch;
+  color: var(--paper-dim);
+}
+
+/* ============================== SIGNUP ============================== */
+
+/* What actually happens when you hand over an address, stated before the
+   field rather than in small print under it. */
+.promise {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem clamp(1.2rem, 3vw, 2.4rem);
+  margin: clamp(1.6rem, 3vw, 2.2rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.promise li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--micro);
+  font-size: 0.82rem;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: var(--lift-1);
+}
+
+.promise li::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.signup {
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  max-width: 34rem;
+  text-align: left;
+}
+
+.signup__label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-family: var(--micro);
+  font-size: 0.72rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: var(--lift-1);
+}
+
+.signup__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.signup__input {
+  flex: 1 1 15rem;
+  min-width: 0;
+  padding: 0.95rem 1.1rem;
+  font-family: var(--body);
+  font-size: 1rem;
+  color: var(--paper);
+  background: rgba(8, 18, 22, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 0;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: border-color 200ms ease, background 200ms ease;
+}
+
+.signup__input::placeholder {
+  color: rgba(233, 240, 234, 0.62);
+}
+
+.signup__input:focus {
+  border-color: var(--gold);
+  background: rgba(8, 18, 22, 0.8);
+  outline: none;
+}
+
+.signup__input[aria-invalid='true'] {
+  border-color: #f0a08a;
+}
+
+.signup__submit {
+  flex: 0 0 auto;
+  padding: 0.95rem 1.9rem;
+  font-family: var(--micro);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #101c1e;
+  background: #f2ece2;
+  border: 1px solid #f2ece2;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.signup__submit:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.signup__error {
+  margin: 0.7rem 0 0;
+  font-size: 0.94rem;
+  color: #ffc9b4;
+  text-shadow: var(--lift-1);
+}
+
+.signup__done {
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  max-width: 34rem;
+  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: var(--lift-1);
+}
+
+/* ============================== FOOT ============================== */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
+  border-top: 1px solid var(--hair);
+  background: var(--ink);
+}
+
+.foot__note {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 0.9rem;
+  color: var(--paper-faint);
+}
+
+/* ============================== THE DEMO ============================== */
+
+.demo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  opacity: 0;
+  transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.demo[data-open='true'] {
+  opacity: 1;
+}
+
+.demo__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 10, 12, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.demo__panel {
+  position: relative;
+  width: min(56rem, 100%);
+  max-height: 90svh;
+  overflow-y: auto;
+  padding: clamp(1.6rem, 3.4vw, 2.6rem);
+  background: #0a1417;
+  border: 1px solid var(--hair-strong);
+  transform: translateY(14px);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.demo[data-open='true'] .demo__panel {
+  transform: none;
+}
+
+.demo__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+
+.demo__head .eyebrow {
+  color: var(--gold);
+  text-shadow: none;
+}
+
+.demo__close {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--paper-dim);
+  background: none;
+  border: 1px solid var(--hair);
+  cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.demo__close:hover {
+  color: var(--paper);
+  border-color: var(--hair-strong);
+}
+
+.demo__close svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+/* ---- the line: the demo's only instrument ---- */
+
+.wave {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  border: 1px solid var(--hair);
+  background: #08131a;
+}
+
+.wave__canvas {
+  display: block;
+  width: 100%;
+  height: clamp(7rem, 16vw, 11rem);
+}
+
+/* ---- transport ---- */
+
+.demo__transport {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.4rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+}
+
+.demo__play {
+  padding: 0.85rem 2rem;
+  font-family: var(--micro);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #101c1e;
+  background: #f2ece2;
+  border: 1px solid #f2ece2;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.demo__play:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.demo__now {
+  flex: 1 1 16rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--paper-dim);
+}
+
+.demo__meter {
+  flex: 1 1 100%;
+  height: 1px;
+  background: var(--hair);
+}
+
+/* Driven from the audio's own rAF loop, so it scales rather than resizing —
+   no transition either, because the frame loop already is the animation. */
+.demo__meter span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(var(--fill, 0));
+  transform-origin: left center;
+}
+
+.demo__after {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  padding-top: clamp(1.4rem, 3vw, 2rem);
+  border-top: 1px solid var(--hair);
+}
+
+.demo__after p {
+  flex: 1 1 18rem;
+  margin: 0;
+  color: var(--paper);
+}
+
+.demo__cta {
+  padding: 0.8rem 1.6rem;
+  font-family: var(--micro);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #101c1e;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  text-decoration: none;
+}
+
+.demo__again {
+  padding: 0.8rem 1.6rem;
+  font-family: var(--micro);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  background: none;
+  border: 1px solid var(--hair);
+  cursor: pointer;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.demo__again:hover {
+  color: var(--paper);
+  border-color: var(--hair-strong);
+}
+
+body[data-overlay='open'] .rim {
+  opacity: 0;
+  pointer-events: none;
+}

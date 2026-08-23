@@ -1,0 +1,17 @@
+{
+  "name": "dorado-website",
+  "version": "1.0.0",
+  "description": "Marketing website for Dorado — immersive spatial-audio running app",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.0"
+  },
+  "private": true
+}
