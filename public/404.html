@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+  404. Served straight from /public by the host, so it is deliberately
+  self-contained: no build step, no stylesheet, no fonts to fetch. It borrows
+  the site's ink, hairline and gold, and nothing else.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="robots" content="noindex"/>
+    <meta name="theme-color" content="#0b1517"/>
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <title>Off the route — Dorado</title>
+    <style>
+        :root {
+            --ink: #0b1517;
+            --paper: #eef3ee;
+            --paper-dim: #a9bcb6;
+            --gold: #e6b35c;
+            --hair: rgba(184, 205, 199, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: clamp(1.25rem, 5vw, 4.5rem);
+            text-align: center;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: Georgia, 'Times New Roman', serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .no {
+            margin: 0;
+            font-family: 'Futura', 'Century Gothic', system-ui, sans-serif;
+            font-size: 0.76rem;
+            font-weight: 400;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--paper-dim);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 7vw, 3.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        p {
+            max-width: 34ch;
+            margin: 0;
+            color: var(--paper-dim);
+            line-height: 1.6;
+        }
+
+        hr {
+            width: min(22rem, 100%);
+            margin: 0;
+            border: 0;
+            border-top: 1px solid var(--hair);
+        }
+
+        a {
+            font-family: 'Futura', 'Century Gothic', system-ui, sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #101c1e;
+            background: #f2ece2;
+            border: 1px solid #f2ece2;
+            padding: 0.85rem 2rem;
+            transition: background 200ms ease, border-color 200ms ease;
+        }
+
+        a:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 3px;
+        }
+    </style>
+</head>
+<body>
+<p class="no">Error 404</p>
+<h1>You have wandered off the route.</h1>
+<hr/>
+<p>There is nothing at this address. The basin is the other way.</p>
+<a href="/">Back to the start</a>
+</body>
+</html>
