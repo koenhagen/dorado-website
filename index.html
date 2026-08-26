@@ -1,23 +1,4 @@
 <!doctype html>
-<!--
-  DIRECTION CONTRACT — The Open Basin
-
-  THESIS: The vista is the product. One enormous open landscape at dawn holds
-    the whole offer; the interface is four weightless marks at the corners.
-    No closed canopy, and no section-stack of cards.
-  OWN-WORLD: Aerial perspective — every ridge lighter and bluer as it recedes.
-    Dawn blue #16324f to coral #e9a086 at the horizon, basin mist, river silver,
-    one gold spark where the city catches first light. Between vistas, a deep
-    teal-black #0b1517 with hairline rules and nothing on it. Sorts Mill Goudy at
-    vista scale over Jost micro-caps. No cards, no panels, no boxes.
-  STORY: There is a place out there. You reach it on foot, from your own street.
-  FIRST VIEWPORT: Full-bleed dawn basin between two forested bluffs. Mark at
-    top-left, nav and Join the beta at top-right, the region caption at
-    bottom-left, Supports Spotify/Strava at bottom-right. Dead centre:
-    eyebrow, headline, one line, and Listen to the demo.
-  FORM: Brief-pinned (portal.app). Motion: a dawn that lifts, mist that drifts,
-    and a gold waveform that moves with the live audio.
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
@@ -625,7 +606,10 @@
         </div>
 
         <!-- The recording. Swap the file here; nothing else needs to change. -->
-        <audio id="demo-audio" preload="auto" src="/audio/demo-placeholder.wav"></audio>
+        <!-- Relative on purpose: Vite rewrites public-asset paths on link and
+             script tags, but not on audio, so a root-absolute path here would
+             404 wherever the site is not served from the domain apex. -->
+        <audio id="demo-audio" preload="auto" src="./audio/demo-placeholder.wav"></audio>
 
         <div class="demo__transport">
             <button type="button" class="demo__play" id="demo-toggle" data-overlay-focus>
