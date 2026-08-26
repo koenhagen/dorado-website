@@ -1,7 +1,7 @@
 @import './fonts.css';
 
 /* ==========================================================================
-   DORADO — THE OPEN BASIN
+   DORADO
    Aerial perspective: everything gets lighter and bluer as it recedes. The
    vistas carry the page; between them the ground goes to teal-black and holds
    nothing but hairlines. No cards, no panels, no boxes anywhere.
@@ -261,10 +261,6 @@ body {
   isolation: isolate;
 }
 
-/* Oversized on purpose. The scene drifts vertically against the scroll (--par,
-   set per frame in main.ts), and the extra 14% top and bottom is the travel
-   budget — so no amount of drift can lift the artwork off an edge and show the
-   section behind it. */
 .vista__scene {
   position: absolute;
   top: -14%;
@@ -357,7 +353,7 @@ body {
   transform: translateY(0);
 }
 
-/* Supports Spotify / Strava — bottom-right corner mark on the hero. */
+/* Supports Spotify / Strava. */
 .supports {
   position: absolute;
   right: var(--gutter);

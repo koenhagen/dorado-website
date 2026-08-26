@@ -1,5 +1,5 @@
 /**
- * Dorado — The Open Basin
+ * Dorado`
  *
  * The world is three full-bleed vistas with aerial perspective. The only
  * instrument on the page is the gold waveform inside the demo overlay: the
@@ -190,8 +190,6 @@ function wireForm() {
   const done = document.querySelector<HTMLParagraphElement>('#beta-done');
   if (!form || !input || !trap || !submit || !error || !done) return;
 
-  // When the field first became fillable. Sent along so the endpoint can weigh
-  // how quickly the address arrived — a person takes seconds, a script does not.
   const shown = Date.now();
   const resting = submit.textContent ?? 'Join the beta';
   let sending = false;
@@ -215,7 +213,7 @@ function wireForm() {
     const value = input.value.trim();
     if (!value) return fail('We need an address before we can send you the route.');
     if (!input.checkValidity()) {
-      return fail(`“${value}” is not an address we can reach — check the @ and the dot.`);
+      return fail(`“${value}” is not an address we can reach`);
     }
 
     sending = true;
