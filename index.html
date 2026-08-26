@@ -72,12 +72,16 @@
             <stop offset="100%" stop-color="#e0a05a"/>
         </linearGradient>
 
-        <!-- The river takes its colour from whatever sky is above it. -->
-        <linearGradient id="water-dawn" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#dcc3ad"/>
-            <stop offset="34%" stop-color="#9fb4bd"/>
-            <stop offset="100%" stop-color="#2c4753"/>
+        <!-- The trail up to the city. Read bottom to top, because that is the
+             direction it is walked: solid at your feet, gone by the mist. -->
+        <linearGradient id="trail-fade" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="#f0c268" stop-opacity="0.85"/>
+            <stop offset="62%" stop-color="#f0c268" stop-opacity="0.62"/>
+            <stop offset="92%" stop-color="#f0c268" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#f0c268" stop-opacity="0"/>
         </linearGradient>
+
+        <!-- The river takes its colour from whatever sky is above it. -->
         <linearGradient id="water-noon" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#cfe0dd"/>
             <stop offset="45%" stop-color="#8fb2b4"/>
@@ -139,13 +143,11 @@
                 viewBox="0 0 1600 900"
                 preserveAspectRatio="xMidYMid slice"
                 role="img"
-                aria-label="Dawn over an open jungle basin, seen from a clearing between two forested bluffs. A river winds out of the far valley and a small gold city catches the first light on a distant spur."
+                aria-label="Dawn over an open jungle basin, seen from a clearing between two forested bluffs. A footpath climbs out of the foreground toward a small gold city catching the first light on a distant spur."
         >
             <!-- Depth planes. Each drifts at its own rate (see startParallax);
                  data-depth 0 is the far air, 1 is the ground at your feet and is
-                 the reference that does not move relative to the frame. The sky
-                 wash and the basin shading stay out of it — one is infinitely far
-                 away, the other is lighting rather than landscape. -->
+                 the reference that does not move relative to the frame. -->
             <rect width="1600" height="900" fill="url(#sky-dawn)"/>
 
             <g class="plane" data-depth="0.06">
@@ -172,8 +174,7 @@
                 <path class="range range--mid"
                       d="M0 900V614l110-34 92 22 108-44 118 30 96-36 124 26 100-40 116 34 104-24 122 40 98-28 118 32 94-22 100 26 100-24v418z"
                       fill="#5f8791"/>
-                <!-- the city, on a spur across the basin. Small on purpose: it is the
-                     thing you are running toward, not the thing you have reached. -->
+
                 <g class="city" transform="translate(846 522)">
                     <path d="M0 40h74v10H0z" fill="#4a6b6a"/>
                     <path d="M8 30h58v10H8zM16 20h42v10H16zM24 12h26v8H24z" fill="#577875"/>
@@ -189,14 +190,20 @@
                 <rect class="haze haze--far" x="-200" y="556" width="2000" height="116" fill="url(#haze)"/>
             </g>
 
-            <!-- the near jungle floor of the basin, and the river off it -->
+            <!-- the near jungle floor of the basin, and the route across it -->
             <g class="plane" data-depth="0.62">
                 <path class="range range--near"
                       d="M0 900V690l124-30 104 24 116-40 122 32 108-34 130 28 104-38 124 34 110-26 126 38 104-30 128 34 100-24 100 28v404z"
                       fill="#35604d"/>
-                <path class="river"
-                      d="M842 660c-14 44-52 66-74 104-26 44-30 82-58 122-24 34-64 54-96 86-26 26-42 50-58 80h584c-24-38-58-62-92-96-38-38-56-70-82-112-24-38-42-62-52-104-8-32-8-56-12-80z"
-                      fill="url(#water-dawn)" opacity="0.9"/>
+                <!-- The way to the city: out of the ground at your feet,
+                     switching back up the near slope, thinning into the mist
+                     before it reaches the spur. It is the run, drawn. -->
+                <path class="trail"
+                      d="M782 918c-16-56-52-84-44-120 8-36 96-48 152-62 56-14 86-32 66-52-20-20-92-26-112-44-16-14-4-32 8-44 12-12 18-28 16-44"
+                      fill="none"
+                      stroke="url(#trail-fade)"
+                      stroke-width="3"
+                      stroke-linecap="round"/>
             </g>
 
             <!-- the two bluffs that frame the view, nearest and darkest -->
@@ -530,7 +537,6 @@
 
             <ul class="promise">
                 <li>Available on iPhone and Android</li>
-                <li>No newsletter, no other post</li>
             </ul>
 
             <form class="signup" id="beta-form" novalidate>
@@ -549,12 +555,28 @@
                     />
                     <button type="submit" class="signup__submit">Join the beta</button>
                 </div>
+
+                <!-- Honeypot. Off-screen and out of the tab order, so no person
+                     ever meets it; scripts that fill every field in the form
+                     do, and the endpoint drops whatever arrives with it set.
+                     Not display:none — the crude bots skip those. -->
+                <div class="signup__trap" aria-hidden="true">
+                    <label for="beta-hp">Leave this field empty</label>
+                    <input
+                            id="beta-hp"
+                            name="hp"
+                            type="text"
+                            tabindex="-1"
+                            autocomplete="off"
+                    />
+                </div>
+
                 <p class="signup__error" id="beta-error" role="alert" hidden></p>
             </form>
 
             <p class="signup__done" id="beta-done" hidden>
-                You are on the list. We will send the download link the day the beta
-                opens, and nothing else until then.
+                Check your inbox — there is one mail there asking you to confirm.
+                Click the link in it and you are on the list.
             </p>
         </div>
 

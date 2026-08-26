@@ -76,7 +76,7 @@ body {
   margin: 0;
   background: var(--ink);
   color: var(--paper);
-  font-family: var(--body);
+  font-family: var(--body), serif;
   font-size: 1.0625rem;
   font-weight: 300;
   line-height: 1.62;
@@ -103,7 +103,7 @@ body {
 
 .display {
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--display), serif;
   font-weight: 400;
   line-height: 1.06;
   letter-spacing: 0.004em;
@@ -140,7 +140,7 @@ body {
    appears three times on the page — a kicker, not a grammar. */
 .eyebrow {
   margin: 0 0 clamp(1rem, 2vw, 1.6rem);
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.42em;
@@ -211,7 +211,7 @@ body {
 }
 
 .rim__nav a {
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.82rem;
   font-weight: 300;
   letter-spacing: 0.06em;
@@ -319,7 +319,7 @@ body {
 
 .vista__micro {
   margin: 1rem 0 0;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.76rem;
   font-weight: 300;
   letter-spacing: 0.14em;
@@ -332,7 +332,7 @@ body {
    one lit thing in the frame rather than another translucent overlay. */
 .listen {
   padding: 1.05rem 2.6rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: clamp(0.82rem, 1.3vw, 0.92rem);
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -369,7 +369,7 @@ body {
 }
 
 .supports__word {
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.7rem;
   font-weight: 300;
   letter-spacing: 0.26em;
@@ -426,7 +426,7 @@ body {
 
 .place__name {
   display: block;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.82rem;
   font-weight: 400;
   letter-spacing: 0.05em;
@@ -439,7 +439,7 @@ body {
   align-items: center;
   gap: 0.35rem;
   margin-top: 0.2rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.74rem;
   font-weight: 300;
   color: rgba(255, 255, 255, 0.74);
@@ -519,6 +519,28 @@ body {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* The route to the city, walked once on arrival — the hero's and /thanks's are
+   the same trail seen from the same spot, so they draw the same way.
+
+   640 is a hair over the longest of the two paths (621 units), which is what a
+   dasharray has to be to leave no gap once it has slid home. Resting state is
+   drawn: the animation only takes the line away and gives it back, so under
+   reduced motion — where every animation above is cancelled — the trail is
+   simply there. */
+.trail {
+  stroke-dasharray: 640;
+  animation: trail-draw 2.2s cubic-bezier(0.16, 1, 0.3, 1) 300ms backwards;
+}
+
+@keyframes trail-draw {
+  from {
+    stroke-dashoffset: 640;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
@@ -694,7 +716,7 @@ body {
    the beat. Same tracked micro-caps as every other label in the system. */
 .beat__tag {
   margin: 0 0 clamp(0.5rem, 1vw, 0.8rem);
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.28em;
@@ -729,7 +751,7 @@ body {
 
 .need__head {
   margin: 0 0 1.2rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.74rem;
   font-weight: 400;
   letter-spacing: 0.22em;
@@ -750,7 +772,7 @@ body {
 .need__list li {
   padding: 0.85rem 0;
   border-bottom: 1px solid var(--hair);
-  font-family: var(--display);
+  font-family: var(--display), serif;
   font-size: clamp(1.05rem, 1.7vw, 1.3rem);
   line-height: 1.35;
 }
@@ -881,7 +903,7 @@ body {
 }
 
 .shot__wait {
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.68rem;
   font-weight: 300;
   letter-spacing: 0.24em;
@@ -925,7 +947,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.82rem;
   font-weight: 300;
   letter-spacing: 0.04em;
@@ -951,7 +973,7 @@ body {
 .signup__label {
   display: block;
   margin-bottom: 0.6rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.72rem;
   font-weight: 300;
   letter-spacing: 0.2em;
@@ -970,7 +992,7 @@ body {
   flex: 1 1 15rem;
   min-width: 0;
   padding: 0.95rem 1.1rem;
-  font-family: var(--body);
+  font-family: var(--body), serif;
   font-size: 1rem;
   color: var(--paper);
   background: rgba(8, 18, 22, 0.62);
@@ -998,7 +1020,7 @@ body {
 .signup__submit {
   flex: 0 0 auto;
   padding: 0.95rem 1.9rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1010,9 +1032,26 @@ body {
   transition: background 200ms ease, border-color 200ms ease;
 }
 
-.signup__submit:hover {
+.signup__submit:hover:not(:disabled) {
   background: var(--gold);
   border-color: var(--gold);
+}
+
+/* In flight. Dimmed rather than greyed, so the label stays readable while the
+   address is on its way. */
+.signup__submit:disabled {
+  cursor: progress;
+  opacity: 0.62;
+}
+
+/* The honeypot, parked outside the viewport. Kept in the render tree on
+   purpose: a field that is display:none or hidden is one most bots skip. */
+.signup__trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .signup__error {
@@ -1157,7 +1196,7 @@ body {
 
 .demo__play {
   padding: 0.85rem 2rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1216,7 +1255,7 @@ body {
 
 .demo__cta {
   padding: 0.8rem 1.6rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1229,7 +1268,7 @@ body {
 
 .demo__again {
   padding: 0.8rem 1.6rem;
-  font-family: var(--micro);
+  font-family: var(--micro), sans-serif;
   font-size: 0.78rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;

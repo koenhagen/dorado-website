@@ -177,12 +177,24 @@ function startReveals() {
 
 /* ------------------------------------------------------------------ form --- */
 
+/** The beta list. Double opt-in: this call only sends the confirmation mail,
+ *  and the link in that mail is what actually subscribes the address. */
+const SUBSCRIBE_URL = 'https://dorado.koenhagen.workers.dev/api/subscribe';
+
 function wireForm() {
   const form = document.querySelector<HTMLFormElement>('#beta-form');
   const input = document.querySelector<HTMLInputElement>('#beta-email');
+  const trap = document.querySelector<HTMLInputElement>('#beta-hp');
+  const submit = document.querySelector<HTMLButtonElement>('#beta-form .signup__submit');
   const error = document.querySelector<HTMLParagraphElement>('#beta-error');
   const done = document.querySelector<HTMLParagraphElement>('#beta-done');
-  if (!form || !input || !error || !done) return;
+  if (!form || !input || !trap || !submit || !error || !done) return;
+
+  // When the field first became fillable. Sent along so the endpoint can weigh
+  // how quickly the address arrived — a person takes seconds, a script does not.
+  const shown = Date.now();
+  const resting = submit.textContent ?? 'Join the beta';
+  let sending = false;
 
   const fail = (message: string) => {
     error.textContent = message;
@@ -196,20 +208,44 @@ function wireForm() {
     input.removeAttribute('aria-invalid');
   });
 
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (sending) return;
+
     const value = input.value.trim();
     if (!value) return fail('We need an address before we can send you the route.');
     if (!input.checkValidity()) {
       return fail(`“${value}” is not an address we can reach — check the @ and the dot.`);
     }
 
-    // TODO: connect to the real beta list. Nothing leaves the browser today.
-    console.info('[Dorado beta] pending backend:', value);
-    form.hidden = true;
-    done.hidden = false;
-    done.setAttribute('tabindex', '-1');
-    done.focus();
+    sending = true;
+    submit.disabled = true;
+    submit.textContent = 'Sending…';
+    error.hidden = true;
+
+    try {
+      const response = await fetch(SUBSCRIBE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: value, hp: trap.value, t: shown }),
+      });
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+
+      if (!response.ok) {
+        return fail(payload?.error ?? 'That address did not go through. Try again in a moment.');
+      }
+
+      form.hidden = true;
+      done.hidden = false;
+      done.setAttribute('tabindex', '-1');
+      done.focus();
+    } catch {
+      fail('We could not reach the list. Check your connection and try again.');
+    } finally {
+      sending = false;
+      submit.disabled = false;
+      submit.textContent = resting;
+    }
   });
 }
 
@@ -263,7 +299,7 @@ function wireDemo() {
         after.hidden = true;
       } else if (state === 'ended') {
         label.textContent = 'Play again';
-        now.textContent = 'The basin has gone quiet.';
+        now.textContent = 'The jungle has gone quiet.';
         meter.style.setProperty('--fill', '1');
         wave?.stop();
         after.hidden = false;
