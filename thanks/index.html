@@ -1,0 +1,208 @@
+<!doctype html>
+<!--
+  /thanks — where the confirmation link in the beta mail lands.
+
+  A second entry point, not a second site: it pulls the same stylesheet as the
+  landing page, so the tokens, the fonts and the vista system are shared and
+  can only ever drift together. It is a directory, not thanks.html, so the
+  address in the mail is a clean dorado.run/thanks.
+
+  The landing page's hero holds the sun below the far rim. Here it has cleared
+  it, and a trail is drawn out of the foreground toward the gold city: the
+  address is confirmed, the way is open.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+
+    <title>You're on the list — Dorado</title>
+    <meta
+            name="description"
+            content="Your address is confirmed. One message from Dorado, on the day the beta opens."
+    />
+    <!-- A private landing for one person holding one link. Nothing for search
+         to keep, and nothing for a scraper to preview. -->
+    <meta name="robots" content="noindex, nofollow"/>
+    <meta name="theme-color" content="#0b1517"/>
+
+    <link rel="stylesheet" href="../src/thanks.css"/>
+</head>
+<body>
+<header class="rim">
+    <a class="rim__mark" href="/">
+        <img
+                class="rim__sun"
+                src="/android-chrome-192x192.png"
+                alt=""
+                aria-hidden="true"
+                width="192"
+                height="192"
+        />
+        <img
+                class="wordmark wordmark--rim"
+                src="../assets/logo-letters.svg"
+                alt="Dorado"
+        />
+    </a>
+</header>
+
+<main>
+    <section class="vista arrive">
+        <svg
+                class="vista__scene"
+                viewBox="0 0 1600 900"
+                preserveAspectRatio="xMidYMid slice"
+                role="img"
+                aria-label="Morning over the same basin, with the sun now clear of the far ridge and a footpath climbing out of the foreground toward a small gold city on a distant spur."
+        >
+            <defs>
+                <!-- The landing page's dawn, one hour on: the cold band at
+                     altitude has thinned and the warmth has spread down. -->
+                <linearGradient id="sky-arrive" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#153450"/>
+                    <stop offset="26%" stop-color="#2a5c7e"/>
+                    <stop offset="50%" stop-color="#5b93ab"/>
+                    <stop offset="68%" stop-color="#a8c2c1"/>
+                    <stop offset="82%" stop-color="#e2bda1"/>
+                    <stop offset="100%" stop-color="#f2c79b"/>
+                </linearGradient>
+
+                <linearGradient id="haze-arrive" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#cddbdc" stop-opacity="0"/>
+                    <stop offset="42%" stop-color="#dbe4e0" stop-opacity="0.66"/>
+                    <stop offset="100%" stop-color="#c3d3d3" stop-opacity="0"/>
+                </linearGradient>
+
+                <!-- The trail up to the city, same stops as the landing page's:
+                     read bottom to top, because that is the direction it is
+                     walked. Solid at your feet, gone by the mist. -->
+                <linearGradient id="trail-fade" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stop-color="#f0c268" stop-opacity="0.85"/>
+                    <stop offset="62%" stop-color="#f0c268" stop-opacity="0.62"/>
+                    <stop offset="92%" stop-color="#f0c268" stop-opacity="0.22"/>
+                    <stop offset="100%" stop-color="#f0c268" stop-opacity="0"/>
+                </linearGradient>
+
+                <radialGradient id="basin-shade" cx="50%" cy="42%" r="62%">
+                    <stop offset="0%" stop-color="#0a1a26" stop-opacity="0.5"/>
+                    <stop offset="55%" stop-color="#0a1a26" stop-opacity="0.26"/>
+                    <stop offset="100%" stop-color="#0a1a26" stop-opacity="0"/>
+                </radialGradient>
+            </defs>
+
+            <rect width="1600" height="900" fill="url(#sky-arrive)"/>
+
+            <!-- The sun, off-centre and clear of the ridge, so the centre of
+                 the frame stays dark enough to set the headline in. -->
+            <g class="arrive__light">
+                <ellipse cx="1128" cy="512" rx="300" ry="132" fill="#ffd9a8" opacity="0.32"/>
+                <circle cx="1128" cy="512" r="46" fill="#ffe3b4"/>
+                <circle cx="1128" cy="512" r="78" fill="#ffd9a8" opacity="0.34"/>
+            </g>
+
+            <g class="cloud" opacity="0.55">
+                <path d="M0 330c118-24 214 12 322-6 98-16 160-38 270-28 118 10 176 42 300 34 104-6 176-36 288-28 96 6 156 28 260 20 66-6 112-16 160-28v52c-58 12-104 22-178 26-108 6-166-18-262-24-114-8-186 26-292 32-124 8-182-26-300-36-110-10-172 14-268 30-108 18-202-16-300 4z"
+                      fill="#f4c6a8"/>
+                <path d="M0 404c140-16 232 14 348 2 108-12 170-32 282-24 112 8 174 32 288 26 108-6 176-28 284-22 92 6 156 24 250 18 56-4 100-12 148-22v38c-56 12-102 20-162 24-100 6-160-14-250-20-108-6-176 18-284 24-114 6-176-20-288-28-112-8-174 14-282 26-116 12-204-20-334-2z"
+                      fill="#f8d7bc"/>
+            </g>
+
+            <!-- far range — palest, most air between it and the eye -->
+            <path d="M0 900V548l102-40 90 24 118-56 106 32 94-44 114 28 110-50 126 40 98-32 110 46 106-28 116 36 98-24 120 32 102-26v462z"
+                  fill="#8aa9b6"/>
+
+            <!-- second range, a step nearer and a step greener, carrying the city -->
+            <path d="M0 900V620l108-32 94 20 106-42 120 28 94-34 126 24 98-38 118 32 102-22 124 38 96-26 120 30 92-20 102 24 100-22v420z"
+                  fill="#5f8791"/>
+
+            <g class="arrive__city" transform="translate(772 534)">
+                <path d="M0 40h74v10H0z" fill="#4a6b6a"/>
+                <path d="M8 30h58v10H8zM16 20h42v10H16zM24 12h26v8H24z" fill="#577875"/>
+                <path d="M30 0h6v12h-6zM40 4h5v8h-5z" fill="#6b8a84"/>
+                <path d="M8 30h58v3H8zM16 20h42v3H16zM24 12h26v2H24zM30 0h6v3h-6z" fill="#f0c268"/>
+            </g>
+
+            <!-- valley mist, sitting in the basin the way air actually does -->
+            <rect x="-200" y="560" width="2000" height="112" fill="url(#haze-arrive)"/>
+
+            <!-- the near jungle floor of the basin -->
+            <path d="M0 900V694l120-28 106 22 114-38 124 30 106-32 130 26 106-36 122 32 112-24 124 36 106-28 126 32 100-22 104 26v404z"
+                  fill="#35604d"/>
+
+            <!-- the two bluffs that frame the view. Lower than the hero's: the
+                 view here is out of the pass, not into it. -->
+            <path d="M0 900V386l54 46 70 74 62 84 56 96 62 104 54 110z" fill="#1f4438"/>
+            <path d="M1600 900V368l-60 50-66 78-62 92-58 104-50 108-36 100z" fill="#1d4035"/>
+
+            <!-- the dark plain in front of the viewer -->
+            <path d="M0 900V802c118-16 208 8 320 2 128-6 200-28 330-22 122 6 190 26 314 22 128-4 200-26 326-20 116 6 190 24 310 18v198H0z"
+                  fill="#101d21"/>
+
+            <!-- The route out. Drawn from where you are standing, switching
+                 back up the near slope, gone by the time it reaches the mist. -->
+            <path class="trail"
+                  d="M742 918c-18-58-56-84-50-120 6-34 92-46 146-58 54-12 84-30 66-50-18-20-90-24-110-40-16-14-6-30 6-42 10-10 14-24 12-38"
+                  fill="none"
+                  stroke="url(#trail-fade)"
+                  stroke-width="3"
+                  stroke-linecap="round"/>
+
+            <path d="M0 900V858c134-10 220 10 340 6 130-4 204-20 334-16 124 4 194 18 320 14 130-4 204-18 330-14 92 4 168 14 276 10v142H0z"
+                  fill="#0a1418"/>
+
+            <rect x="0" y="0" width="1600" height="900" fill="url(#basin-shade)"/>
+        </svg>
+
+        <div class="vista__stage arrive__stage">
+            <p class="eyebrow">Email confirmed</p>
+            <h1 class="display display--hero">You're on the list.</h1>
+            <!-- The company for the wait. Standing at the head of the trail, on
+                 the near plain, lit from the same sun. Decorative: the sentence
+                 above says everything a screen reader needs. -->
+<!--            <div class="arrive__figure" aria-hidden="true">-->
+<!--                <img-->
+<!--                        class="arrive__alpaca"-->
+<!--                        src="../assets/alpaca.png"-->
+<!--                        alt=""-->
+<!--                        width="827"-->
+<!--                        height="866"-->
+<!--                />-->
+<!--                <span class="arrive__ground"></span>-->
+<!--            </div>-->
+
+            <p class="arrive__act">
+                <a class="arrive__back" href="/">Back to basecamp</a>
+            </p>
+        </div>
+
+        <p class="place">
+            <span class="place__name">The trailhead</span>
+            <span class="place__sub">
+                <span class="place__pin" aria-hidden="true">
+                  <svg viewBox="0 0 12 16"><path
+                          d="M6 0a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6zm0 8.4A2.4 2.4 0 1 1 6 3.6a2.4 2.4 0 0 1 0 4.8z"/></svg>
+                </span>
+                Yungas, Bolivia
+            </span>
+        </p>
+    </section>
+</main>
+
+<footer class="foot">
+    <img
+            class="wordmark wordmark--foot"
+            src="../assets/logo-letters.svg"
+            alt="Dorado"
+    />
+    <p class="foot__note">
+        Wrong inbox, or changed your mind? Every mail we send carries an
+        unsubscribe link, including the one that brought you here.
+    </p>
+</footer>
+</body>
+</html>
