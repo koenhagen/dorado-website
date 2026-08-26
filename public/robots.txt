@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://getdorado.app/sitemap.xml
+Sitemap: https://dorado.run/sitemap.xml

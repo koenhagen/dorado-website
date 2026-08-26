@@ -58,7 +58,7 @@ requirement, so anyone with a phone can take part.
   already possible in the demo.
 - The marketing site is the pre-launch surface: its job is to convey the
   experience and collect beta signups.
-- Confirmed 2026-08-23: it ships at **https://getdorado.app/** — the domain is
+- Confirmed 2026-08-23: it ships at **https://dorado.run/** — the domain is
   baked into the canonical URL, the social tags, robots.txt and sitemap.xml.
 
 ## Capabilities and Constraints
