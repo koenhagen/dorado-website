@@ -1,15 +1,19 @@
-# Demo audio (placeholder)
+# Demo audio
 
-`demo-placeholder.wav` is a generated stand-in — 12 seconds, mono — so the
-player and waveform work end to end. It is what the demo overlay plays.
+`demo.wav` is what the demo overlay plays — stereo, 16 kHz, about 64 seconds.
 
-Replace it with the real Dorado immersive/spatial-audio demo. Either:
+To swap it, either keep the filename or add your file and update the `src` of
+`#demo-audio` in `index.html`. Nothing else needs to change: the transport
+reads the length off the file, and the waveform is drawn from an analyser on
+whatever is playing.
 
-- keep the filename `demo-placeholder.wav`, or
-- add your file and update the `src` of `#demo-audio` in `index.html`.
+Two things worth knowing about how it loads:
 
-Nothing else needs to change: the transport reads the length off the file, and
-the waveform is drawn from an analyser on whatever is playing.
-
-For a spatial demo, a stereo/binaural file is ideal — the site already tells
-visitors to use headphones.
+- The element is `preload="metadata"`, so the page costs only the header.
+  `src/main.ts` fetches the audio when the overlay opens, and plays it in the
+  same breath. Anything much larger than this will be felt in that gap, which
+  the transport covers with a "Starting…" label and, if the buffer later runs
+  dry, "Buffering…".
+- It is served from `public/`, so it ships at a stable path and is not
+  content-hashed. A replacement of the same name will be cached by anyone who
+  already heard the old one.

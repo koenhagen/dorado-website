@@ -1,19 +1,11 @@
 /* ==========================================================================
-   /thanks — the landing for the confirmation link in the beta mail.
-
-   It borrows the whole landing page: tokens, fonts, the vista, the rim, the
-   footer, the region caption. Only what is unique to arriving lives here — the
-   trail that draws itself, the alpaca waiting at the head of it, and the
-   quieter back link. Nothing below may restate a value style.css already owns.
+   /thanks — landing for the confirmation link in the beta mail.
+   Borrows everything from style.css; only what is unique to arriving is here.
    ========================================================================== */
 
 @import './style.css';
 
-/* One centred column. The vista already centres its stage; this only narrows
-   the measure and names the alpaca's size, which is set here rather than on
-   the image because the ground shadow under it has to match. */
 .arrive {
-  --alpaca: clamp(9rem, 15vh, 14rem);
   text-align: center;
 }
 
@@ -21,8 +13,6 @@
   max-width: 44rem;
 }
 
-/* The one action on the page, and it is a way back rather than a way on:
-   an outline, not the ivory of the landing page's primary. */
 .arrive__act {
   margin: clamp(2rem, 4vw, 2.8rem) 0 0;
 }
@@ -49,61 +39,6 @@
   text-shadow: none;
 }
 
-/* ---- the alpaca ---- */
-
-/* Held well clear of the sentence above it, and centred whether it sits in the
-   stage or under it. */
-.arrive__figure {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: clamp(2.5rem, 6vh, 4rem) auto 0;
-}
-
-/* Sized by height, because the plain it stands on is a fixed share of the
-   frame and the animal has to keep its feet on it at every viewport. The
-   shadow is thrown away from the sun, which is right of frame. */
-.arrive__alpaca {
-  display: block;
-  width: auto;
-  height: var(--alpaca);
-  filter: drop-shadow(-10px 6px 16px rgba(6, 16, 20, 0.55));
-}
-
-/* Ground contact. Without it the alpaca reads as pasted over the scene rather
-   than standing in it. */
-.arrive__ground {
-  width: var(--alpaca);
-  height: calc(var(--alpaca) * 0.12);
-  margin-top: calc(var(--alpaca) * -0.06);
-  background: radial-gradient(50% 50% at 50% 50%, rgba(5, 12, 15, 0.62) 0%, rgba(5, 12, 15, 0) 72%);
-}
-
-/* ---- the one authored moment ---- */
-
-/* Everything below is an addition to a state that is already correct: the
-   alpaca rests in place, so the page under `prefers-reduced-motion` — where
-   style.css cancels every animation — is the finished frame rather than an
-   empty one. The trail draws itself from style.css, which both pages share. */
-
-/* The animal arrives a beat after the trail has started: it walked up. */
-.arrive__alpaca {
-  animation: arrive-settle 1s cubic-bezier(0.16, 1, 0.3, 1) 700ms backwards;
-}
-
-@keyframes arrive-settle {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* The city catches the light last, once the trail has reached the mist. */
 .arrive__city {
   animation: city-lift 1.4s ease-out 1.9s backwards;
 }
@@ -117,19 +52,8 @@
   }
 }
 
-/* ---- narrow ---- */
-
 @media (max-width: 46rem) {
   .arrive__stage {
     max-width: 34rem;
-  }
-}
-
-/* Short and wide — a laptop in landscape, or a phone turned sideways. The
-   alpaca is the first thing that can go: the sentence cannot. */
-@media (max-height: 34rem) {
-  .arrive__alpaca,
-  .arrive__ground {
-    display: none;
   }
 }

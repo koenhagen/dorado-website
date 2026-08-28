@@ -1,11 +1,3 @@
-/**
- * Dorado`
- *
- * The world is three full-bleed vistas with aerial perspective. The only
- * instrument on the page is the gold waveform inside the demo overlay: the
- * live shape of the mix, straight off the analyser.
- */
-
 import './style.css';
 import { DemoOverlay } from './lib/demo-overlay';
 import { WaveformRenderer } from './lib/waveform';
@@ -13,74 +5,78 @@ import { DemoPlayer, formatTime, type DemoFrame } from './lib/player';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* -------------------------------------------------------------- parallax ---
-   Depth, done the way it actually works: the far air barely shifts, the ground
-   at your feet keeps up with the page, and everything between is spaced out in
-   proportion. Two offsets compose.
+/* --- parallax ---
+   Two offsets compose: the whole scene lags the page (--par), then each depth
+   plane catches back up weighted by depth (0 = far air, 1 = the near ground).
+   Sign matters — `offset` shrinks as the vista rises, so following it moves
+   *with* the page; the scene lag is negated against it so the far air trails.
 
-   1. The whole scene lags the page slightly (--par, in CSS pixels). This is the
-      window moving, and it applies to the sky as well.
-   2. Each depth plane inside the scene then catches back up, weighted by
-      depth: depth 0 stays with the drifting scene and is the reference, depth
-      1 tracks the page hardest and rides up over everything behind it.
+   Reads and writes run in separate passes: a getBoundingClientRect after a
+   style write forces a synchronous layout flush.
 
-   Sign matters and is easy to get backwards. `offset` shrinks as the vista
-   rises up the viewport, so a translate that follows `offset` moves *with* the
-   page — that is the near ground. The scene lag in (1) is negated against it
-   instead, so the far air trails. Get this the other way round and the far air
-   does all the travelling while the ground sits still, which reads as the
-   ridge lines squashing together rather than as depth.
+   Nothing assumes the scene is an inline <svg> — a scene is whatever carries
+   `.vista__scene`, a plane whatever carries `data-depth` inside it. */
 
-   Edge safety: (1) is clamped inside the 14% overshoot the CSS gives each
-   scene. (2) is bounded too, but the geometry is what really protects it —
-   every plane is a full-width mass filled well past the bottom of the frame,
-   and the plane in front of it covers that bottom regardless, so a drifting
-   plane only ever moves its own ridge line.
-
-   Only scenes on screen are measured, and none of it runs under reduced
-   motion. */
+/** Positioned directly, so it needs a style attribute. */
+type Movable = HTMLElement | SVGElement;
 
 interface Plane {
-  el: SVGElement;
+  el: Movable;
   /** 0 = far air, 1 = the ground you are standing on. */
   depth: number;
+  /** Last transform written, so an unchanged frame writes nothing. */
+  written: string;
 }
 
 interface Scene {
-  el: SVGElement;
+  el: Movable;
   frame: HTMLElement;
   planes: Plane[];
+  /** Last `--par` written, same reason. */
+  written: string;
 }
 
 function startParallax() {
   if (reduceMotion) return;
 
   const scenes: Scene[] = [];
-  for (const el of document.querySelectorAll<SVGElement>('.vista__scene')) {
+  for (const el of document.querySelectorAll<Movable>('.vista__scene')) {
     const frame = el.parentElement;
     if (!frame) continue;
-    const planes = Array.from(el.querySelectorAll<SVGElement>('[data-depth]')).map((node) => ({
+    const planes = Array.from(el.querySelectorAll<Movable>('[data-depth]')).map((node) => ({
       el: node,
       depth: Number(node.dataset.depth ?? 1),
+      written: '',
     }));
-    scenes.push({ el, frame, planes });
+    scenes.push({ el, frame, planes, written: '' });
   }
   if (scenes.length === 0) return;
 
-  /** How much the whole scene lags the page, as a fraction of scroll. */
+  /** Scene lag, as a fraction of scroll. */
   const SCENE_LAG = 0.05;
   /**
-   * How far apart the planes pull, in viewBox units, at a full viewport of
-   * travel. Bounded by the artwork, not by taste: the tightest pair of ridge
-   * lines in any scene is the hero's mid range at y=614 and near floor at
-   * y=690, 76 units apart with a depth difference of 0.28. Anything above
-   * ~270 lets the mid range sink behind the near one and the depth reads
-   * backwards. 200 keeps a clear margin.
+   * Plane spread at a full viewport of travel. Above ~270 the hero's mid range
+   * sinks behind the near one and the depth reads backwards.
+   *
+   * Written as px, which inside an inline SVG is one viewBox unit. Move the
+   * scenes to external SVG files and planes become HTML elements, where a px is
+   * a screen px — this will need re-deriving against the viewport.
    */
   const SPREAD = 200;
 
   const onScreen = new Set<Scene>();
   const byElement = new Map<Element, Scene>(scenes.map((scene) => [scene.el, scene]));
+
+  // One rAF gate, so a burst of scroll or resize collapses into one frame.
+  let ticking = false;
+  function schedule() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      apply();
+    });
+  }
 
   const watcher = new IntersectionObserver(
     (entries) => {
@@ -90,58 +86,65 @@ function startParallax() {
         if (entry.isIntersecting) onScreen.add(scene);
         else onScreen.delete(scene);
       }
-      apply();
+      schedule();
     },
     { rootMargin: '15% 0px' },
   );
   scenes.forEach((scene) => watcher.observe(scene.el));
 
-  let ticking = false;
+  interface Reading {
+    scene: Scene;
+    lag: number;
+    spread: number;
+  }
+
+  const readings: Reading[] = [];
 
   function apply() {
     const viewport = window.innerHeight;
     const middle = viewport / 2;
 
+    // Read pass: measure everything before writing anything.
+    readings.length = 0;
     for (const scene of onScreen) {
       const box = scene.frame.getBoundingClientRect();
-      // Positive while the vista is still below the viewport centre, shrinking
-      // to zero as it centres and going negative once it has passed above.
+      // Positive below the viewport centre, negative once past it.
       const offset = box.top + box.height / 2 - middle;
 
       const limit = box.height * 0.13;
-      const lag = Math.max(-limit, Math.min(limit, -offset * SCENE_LAG));
-      scene.el.style.setProperty('--par', `${lag.toFixed(1)}px`);
+      readings.push({
+        scene,
+        lag: Math.max(-limit, Math.min(limit, -offset * SCENE_LAG)),
+        spread: Math.max(-1, Math.min(1, offset / viewport)) * SPREAD,
+      });
+    }
 
-      const spread = Math.max(-1, Math.min(1, offset / viewport)) * SPREAD;
+    // Write pass. A plane is not its own compositor layer — touching one
+    // invalidates the whole scene — so unchanged values are left alone.
+    for (const { scene, lag, spread } of readings) {
+      const par = `${lag.toFixed(1)}px`;
+      if (par !== scene.written) {
+        scene.el.style.setProperty('--par', par);
+        scene.written = par;
+      }
+
       for (const plane of scene.planes) {
-        // Inside SVG a CSS px is one user unit, so this is 900-unit space.
-        plane.el.style.transform = `translateY(${(spread * plane.depth).toFixed(2)}px)`;
+        const transform = `translateY(${(spread * plane.depth).toFixed(2)}px)`;
+        if (transform === plane.written) continue;
+        plane.el.style.transform = transform;
+        plane.written = transform;
       }
     }
-    ticking = false;
   }
 
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(apply);
-    },
-    { passive: true },
-  );
-  window.addEventListener('resize', apply);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
   apply();
 }
 
-/* --------------------------------------------------------------- reveals ---
-   Everything below the hero arrives as you reach it: one rise, staggered
-   within a group so a row of four reads left to right instead of snapping in
-   as a block. Same easing and distance as the hero's entrance, so the page has
-   one motion rather than a collection of them.
-
-   Content is visible by default and the class only takes it away — so if the
-   script never runs, or motion is reduced, the page is simply all there. */
+/* --- reveals ---
+   Content is visible by default; the class only takes it away, so if the script
+   never runs the page is simply all there. */
 
 function startReveals() {
   const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
@@ -154,7 +157,7 @@ function startReveals() {
     const children = Array.from(group.children) as HTMLElement[];
     children.forEach((child, i) => {
       child.classList.add('is-held');
-      // 90ms apart, capped so a long list never crawls in.
+      // Capped so a long list never crawls in.
       child.style.setProperty('--hold', `${Math.min(i, 5) * 90}ms`);
       items.push(child);
     });
@@ -165,8 +168,7 @@ function startReveals() {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         entry.target.classList.remove('is-held');
-        // One-way: nothing re-hides on the way back up.
-        observer.unobserve(entry.target);
+        observer.unobserve(entry.target); // one-way
       }
     },
     { rootMargin: '0px 0px -12% 0px', threshold: 0.01 },
@@ -177,8 +179,7 @@ function startReveals() {
 
 /* ------------------------------------------------------------------ form --- */
 
-/** The beta list. Double opt-in: this call only sends the confirmation mail,
- *  and the link in that mail is what actually subscribes the address. */
+/** Double opt-in: this only sends the confirmation mail; its link subscribes. */
 const SUBSCRIBE_URL = 'https://dorado.koenhagen.workers.dev/api/subscribe';
 
 function wireForm() {
@@ -263,14 +264,13 @@ function wireDemo() {
   const audio = document.querySelector<HTMLAudioElement>('#demo-audio');
   if (!overlayRoot || !toggle || !label || !now || !meter || !after || !audio) return;
 
-  /* Built on first open, never before: the overlay is `hidden` until then, so
-     a canvas made any earlier would size itself to a zero-width box. */
+  // Built on first open: the overlay is `hidden` until then, so a canvas made
+  // earlier would size itself to a zero-width box.
   let wave: WaveformRenderer | null = null;
   const ensureWave = () => {
     if (!wave && waveCanvas) {
-      wave = new WaveformRenderer(waveCanvas, {
-        color: getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#e6b35c',
-      });
+      const gold = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim();
+      wave = new WaveformRenderer(waveCanvas, gold || '#e6b35c');
     }
     return wave;
   };
@@ -289,12 +289,17 @@ function wireDemo() {
     },
 
     onStateChange: (state) => {
-      document.body.dataset.playing = String(state === 'playing');
-      toggle.setAttribute('aria-pressed', String(state === 'playing'));
+      // Buffering still reads as running: only the readout admits to the stall.
+      const live = state === 'playing' || state === 'buffering';
+      toggle.setAttribute('aria-pressed', String(live));
 
       if (state === 'playing') {
         label.textContent = 'Pause';
         after.hidden = true;
+      } else if (state === 'buffering') {
+        label.textContent = 'Pause';
+        now.textContent = 'Buffering…';
+        wave?.stop();
       } else if (state === 'ended') {
         label.textContent = 'Play again';
         now.textContent = 'The jungle has gone quiet.';
@@ -326,6 +331,16 @@ function wireDemo() {
     void player.play().catch(() => undefined);
   });
 
+  // The markup only preloads metadata; opening the overlay fetches the audio.
+  // Once only: `load()` resets the element and would cut off a reopen.
+  let warmed = false;
+  const warmAudio = () => {
+    if (warmed) return;
+    warmed = true;
+    audio.preload = 'auto';
+    audio.load();
+  };
+
   const overlay = new DemoOverlay({
     root: overlayRoot,
     triggers: openers,
@@ -336,12 +351,19 @@ function wireDemo() {
     siblings: Array.from(document.querySelectorAll<HTMLElement>('.rim, main, .foot')),
     onOpen: () => {
       ensureWave();
+      warmAudio();
       if (player.state === 'idle' || player.state === 'ended') {
         player.reset();
         after.hidden = true;
         wave?.stop();
         meter.style.setProperty('--fill', '0');
       }
+
+      /* Autoplay and the AudioContext both need a user gesture; `show()` calls
+         us synchronously from the click, so this is allowed. On refusal, fall
+         back to the resting transport rather than stranding it on "Starting…".
+         Closing mid-recording leaves the player paused, so reopening resumes. */
+      void player.play().catch(() => player.reset());
     },
     onClose: () => player.pause(),
   });

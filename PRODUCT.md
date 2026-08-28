@@ -75,7 +75,7 @@ requirement, so anyone with a phone can take part.
 - One page only, at the repo root — the seven design directions and the chooser
   that indexed them were retired on 2026-08-23.
 - The site includes an audio demo in a modal overlay: `src/lib/player.ts` plays
-  `public/audio/demo-placeholder.wav` through a Web Audio analyser, and
+  `public/audio/demo.wav` through a Web Audio analyser, and
   `src/lib/waveform.ts` draws the gold trace from it.
 - **Undecided:** launch date; pricing and business model — in particular
   whether the beta is free, so no page may say it is; whether Nike Run Club is a
@@ -96,8 +96,9 @@ requirement, so anyone with a phone can take part.
 - **A working demo exists** — a real, runnable Dorado experience that can be
   captured and shown (audio, screens, or footage). It has not yet been put on
   the site.
-- `public/audio/demo-placeholder.wav` is a **generated placeholder**, not real
-  Dorado audio. The real spatial demo track still has to be dropped in.
+- `public/audio/demo.wav` is the demo track the overlay plays, supplied on
+  2026-08-28 and replacing the generated placeholder that preceded it. Stereo,
+  16 kHz 8-bit, about 64 seconds.
 - `assets/alpaca.png` — current mascot image (non-binding).
 - `assets/Spotify_logo_with_text.svg`, `assets/Strava_Logo.svg` — used as
   monotone masks for the "works with" statement.

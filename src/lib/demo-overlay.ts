@@ -1,26 +1,10 @@
 /**
- * The demo overlay.
+ * The demo overlay: opening, the focus trap, Esc, the scrim, scroll lock, and
+ * restoring focus. The panel's markup and styling live with the page.
  *
- * A binaural demo is one of the few things on a marketing page that genuinely
- * earns a modal: it wants the room darkened, the rest of the page out of the
- * way, and the visitor's whole attention for the length of the recording.
- * Everywhere else on this page a dialog would be a lazy container — here it is
- * the point.
- *
- * This module owns only the *behaviour* that must be identical everywhere:
- * opening, the focus trap, Esc, the scrim, scroll lock, restoring focus, and
- * stopping the audio on close. Every pixel of the panel is supplied by the
- * calling version, so v2 gets a lamplit desk and v5 gets a lit chamber without
- * this file knowing anything about either.
- *
- * Accessibility contract:
- * - `role="dialog"` + `aria-modal="true"` + a labelled title.
- * - Focus moves into the dialog on open and returns to the trigger on close.
- * - Tab and Shift+Tab cycle within the dialog; Esc closes it.
- * - The page behind is inert to assistive tech via `aria-hidden` and to the
- *   pointer via the scrim, and cannot scroll underneath.
- * - The demo is never the only path: the version's readable running order
- *   lives inside the dialog too.
+ * Accessibility: `role="dialog"` + `aria-modal="true"`, focus moves in on open
+ * and back to the trigger on close, Tab cycles within, Esc closes, and the page
+ * behind is inert to assistive tech and cannot scroll underneath.
  */
 
 export interface DemoOverlayOptions {
@@ -34,7 +18,6 @@ export interface DemoOverlayOptions {
   siblings: HTMLElement[];
   /** Called after the dialog is visible and focus has moved in. */
   onOpen?: () => void;
-  /** Called after it closes — versions use this to stop playback. */
   onClose?: () => void;
 }
 
@@ -79,8 +62,7 @@ export class DemoOverlay {
       });
     });
 
-    // Esc, and the focus trap, are captured on the document so they work no
-    // matter where focus currently sits inside the panel.
+    // On the document so they work wherever focus sits inside the panel.
     document.addEventListener('keydown', this.onKeydown);
   }
 
@@ -89,8 +71,8 @@ export class DemoOverlay {
     this.open = true;
     this.lastTrigger = trigger ?? (document.activeElement as HTMLElement | null);
 
-    // Lock the page where it stands, without the layout jump that
-    // `overflow: hidden` alone causes on a scrolled page.
+    // Lock the page where it stands, without the layout jump `overflow: hidden`
+    // alone causes on a scrolled page.
     this.scrollY = window.scrollY;
     document.body.style.position = 'fixed';
     document.body.style.top = `-${this.scrollY}px`;
@@ -101,8 +83,8 @@ export class DemoOverlay {
     this.options.siblings.forEach((el) => el.setAttribute('aria-hidden', 'true'));
 
     this.root.hidden = false;
-    // Force a frame so the entrance transition actually runs.
-    void this.root.offsetWidth;
+    void this.root.offsetWidth; // force a frame so the entrance transition runs
+
     this.root.dataset.open = 'true';
     document.body.dataset.overlay = 'open';
 
@@ -118,7 +100,6 @@ export class DemoOverlay {
     document.body.dataset.overlay = 'closed';
     this.options.siblings.forEach((el) => el.removeAttribute('aria-hidden'));
 
-    // Unlock and restore the exact scroll position.
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';
@@ -132,17 +113,11 @@ export class DemoOverlay {
       if (this.open) return; // reopened during the transition
       this.root.hidden = true;
     };
-    // Wait out the exit transition when there is one.
     const duration = this.exitDuration();
     if (duration > 0) window.setTimeout(finish, duration);
     else finish();
 
     this.lastTrigger?.focus();
-  }
-
-  toggle(trigger?: HTMLElement) {
-    if (this.open) this.hide();
-    else this.show(trigger);
   }
 
   private exitDuration(): number {
@@ -158,8 +133,7 @@ export class DemoOverlay {
   }
 
   private focusFirst() {
-    // Prefer an element the version explicitly nominated — usually the play
-    // control, so a keyboard user can start the demo with one more keystroke.
+    // Prefer the nominated control, usually the transport.
     const preferred = this.root.querySelector<HTMLElement>('[data-overlay-focus]');
     const target = preferred ?? this.focusables()[0] ?? this.root;
     if (target === this.root) this.root.setAttribute('tabindex', '-1');

@@ -7,13 +7,6 @@
    nothing but hairlines. No cards, no panels, no boxes anywhere.
    ========================================================================== */
 
-/* The three properties main.ts writes at runtime, declared here so they have a
-   type and a resting value in the stylesheet rather than existing only as a
-   `setProperty` call in the script. Every `var()` below keeps its fallback, so
-   a browser without @property support (Firefox before 128) behaves the same.
-
-   --fill inherits because the meter is set on the track and read by the bar
-   inside it; the other two are set and read on the same element. */
 @property --par {
   syntax: '<length>';
   inherits: false;
@@ -33,24 +26,19 @@
 }
 
 :root {
-  /* the ground between vistas */
   --ink: #0b1517;
   --ink-lift: #101d1f;
 
-  /* light on that ground */
   --paper: #eef3ee;
   --paper-dim: #a9bcb6;
   --paper-faint: #7d938e;
 
-  /* first light */
   --gold: #e6b35c;
   --gold-deep: #a97a2c;
 
-  /* hairlines — the only structural device on this page */
   --hair: rgba(184, 205, 199, 0.22);
   --hair-strong: rgba(184, 205, 199, 0.42);
 
-  /* legibility over a vista, always shadow rather than a plate */
   --lift-1: 0 1px 2px rgba(6, 16, 20, 0.55), 0 2px 18px rgba(6, 16, 20, 0.45);
   --lift-2: 0 2px 4px rgba(6, 16, 20, 0.6), 0 4px 40px rgba(6, 16, 20, 0.55);
 
@@ -131,13 +119,6 @@ body {
   text-shadow: var(--lift-1);
 }
 
-.display--demo {
-  font-size: clamp(1.4rem, 3vw, 2.1rem);
-  color: var(--paper);
-}
-
-/* The one tracked label in the system. It names a place or a duration and
-   appears three times on the page — a kicker, not a grammar. */
 .eyebrow {
   margin: 0 0 clamp(1rem, 2vw, 1.6rem);
   font-family: var(--micro), sans-serif;
@@ -160,7 +141,6 @@ body {
   justify-content: space-between;
   gap: 1.5rem;
   padding: clamp(1rem, 2.2vw, 1.9rem) var(--gutter) clamp(2.5rem, 5vw, 4rem);
-  /* Just enough air darkening to hold the marks over a bright dawn. */
   background: linear-gradient(180deg, rgba(6, 16, 20, 0.5) 0%, rgba(6, 16, 20, 0.22) 46%, rgba(6, 16, 20, 0) 100%);
   pointer-events: none;
 }
@@ -176,8 +156,6 @@ body {
   text-decoration: none;
 }
 
-/* The app icon, at the size of a mark. Same image the tab and the home
-   screen show, so the corner of the page and the icon you tap agree. */
 .rim__sun {
   display: block;
   width: 26px;
@@ -186,8 +164,6 @@ body {
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
 }
 
-/* The carved wordmark. One asset, three sizes — the only thing on the page
-   that spells the name, so it is always set by height and never re-typed. */
 .wordmark {
   display: block;
   width: auto;
@@ -225,7 +201,6 @@ body {
   color: var(--gold);
 }
 
-/* Top-right, and it stays there the whole way down the page. */
 .rim__nav a.rim__beta {
   padding: 0.6rem 1.25rem;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -262,6 +237,9 @@ body {
 }
 
 .vista__scene {
+  /* The 14% overshoot is the room the parallax lag is clamped inside.
+     Planes are deliberately not promoted: an element inside an SVG cannot get
+     its own compositor layer, so will-change there is pure cost. */
   position: absolute;
   top: -14%;
   left: 0;
@@ -270,12 +248,6 @@ body {
   height: 128%;
   z-index: -1;
   transform: translate3d(0, var(--par, 0px), 0);
-  will-change: transform;
-}
-
-/* A depth plane inside a scene. main.ts writes its transform directly; this
-   only asks the compositor to expect it. */
-.plane {
   will-change: transform;
 }
 
@@ -298,9 +270,6 @@ body {
   text-shadow: var(--lift-1);
 }
 
-/* Line and button rise as one block, but they do not sit at one distance: the
-   line finishes the headline's sentence, so it stays close to it, and the
-   button is held well clear of both. */
 .vista__act {
   display: flex;
   flex-direction: column;
@@ -324,8 +293,6 @@ body {
   text-shadow: var(--lift-1);
 }
 
-/* The primary action, dead centre of the vista. Solid ivory so it reads as the
-   one lit thing in the frame rather than another translucent overlay. */
 .listen {
   padding: 1.05rem 2.6rem;
   font-family: var(--micro), sans-serif;
@@ -353,7 +320,6 @@ body {
   transform: translateY(0);
 }
 
-/* Supports Spotify / Strava. */
 .supports {
   position: absolute;
   right: var(--gutter);
@@ -374,8 +340,6 @@ body {
   text-shadow: var(--lift-1);
 }
 
-/* The two logos are monotone masks, so they sit in this world's light instead
-   of importing two other brands' colour into the frame. */
 .mark {
   display: block;
   width: 86px;
@@ -409,8 +373,6 @@ body {
 .mark--lg.mark--strava {
   width: 124px;
 }
-
-/* ---- the two bottom corners ---- */
 
 .place {
   position: absolute;
@@ -449,9 +411,6 @@ body {
   fill: var(--gold);
 }
 
-/* Below this the corners get too tight to hold marks, so the region caption
-   drops. Supports does not — it is a claim about the product, not decoration —
-   so it rejoins the flow and centres under the hero stack. */
 @media (max-width: 46rem) {
   .place {
     display: none;
@@ -463,15 +422,10 @@ body {
     margin-top: clamp(1.4rem, 4vw, 2rem);
   }
 
-  /* With the mark back in the flow, the hero's deep bottom padding is no
-     longer holding anything off the edge — it just strands the mark above a
-     band of empty ground. The top padding stays: the fixed rim needs it. */
   .vista--hero {
     padding-bottom: clamp(2rem, 5vh, 3rem);
   }
 }
-
-/* ---- scene motion: a dawn that lifts ---- */
 
 .cloud {
   animation: drift 90s ease-in-out infinite alternate;
@@ -518,15 +472,8 @@ body {
   }
 }
 
-/* The route to the city, walked once on arrival — the hero's and /thanks's are
-   the same trail seen from the same spot, so they draw the same way.
-
-   640 is a hair over the longest of the two paths (621 units), which is what a
-   dasharray has to be to leave no gap once it has slid home. Resting state is
-   drawn: the animation only takes the line away and gives it back, so under
-   reduced motion — where every animation above is cancelled — the trail is
-   simply there. */
 .trail {
+  /* 640 clears the longest of the two paths (621), so no gap is left. */
   stroke-dasharray: 640;
   animation: trail-draw 2.2s cubic-bezier(0.16, 1, 0.3, 1) 300ms backwards;
 }
@@ -540,14 +487,12 @@ body {
   }
 }
 
-/* The authored moment: on arrival the whole scene settles down into place and
-   the copy rises out of the basin. Once, on load, exponential ease-out. */
 .vista--hero .vista__scene {
   animation: settle 1900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Uses the standalone `scale` property, not transform: scale() — transform is
-   the parallax's, and these two have to compose rather than overwrite. */
+/* The standalone `scale` property, not transform: scale() — transform belongs
+   to the parallax and these two have to compose rather than overwrite. */
 @keyframes settle {
   from {
     scale: 1.06;
@@ -561,8 +506,6 @@ body {
   animation: rise 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* In the hero the wordmark stands in for the kicker, so it inherits the
-   kicker's slot in the rise sequence and its bottom margin. */
 .wordmark--hero {height: clamp(2.55rem, 6vw, 4.2rem);
   margin: 0 auto clamp(0.6rem, 1.4vw, 1.2rem);
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
@@ -574,7 +517,6 @@ body {
 .vista--hero .display--hero {
   animation-delay: 300ms;
 }
-/* Line and button rise as one block now, so the sequence loses a beat. */
 .vista--hero .vista__act {
   animation-delay: 440ms;
 }
@@ -596,8 +538,6 @@ body {
   }
 }
 
-/* Scroll reveals. The held state is what main.ts adds and then takes away, so
-   the resting state of every element is "visible" — no script, no problem. */
 .is-held {
   opacity: 0;
   transform: translateY(20px);
@@ -645,15 +585,10 @@ body {
   max-width: 44rem;
 }
 
-/* ---- how it works ---- */
-
 .vista--how .vista__stage {
   max-width: 68rem;
 }
 
-/* Three beats stacked, each one leaning to the opposite side of the stage.
-   The alternation is what makes them read as three separate things without a
-   card or a rule around any of them. */
 .feats {
   display: grid;
   gap: clamp(2.75rem, 6vw, 4.5rem);
@@ -669,9 +604,6 @@ body {
 }
 
 @media (min-width: 54rem) {
-  /* Odd rows sit left, even rows sit right, and the icon always leads on the
-     outside edge — so the eye zig-zags down instead of running a straight
-     column past three paragraphs. */
   .beat {
     max-width: 46rem;
   }
@@ -708,8 +640,6 @@ body {
   stroke: none;
 }
 
-/* The feature name, kept small so the benefit above the prose is what carries
-   the beat. Same tracked micro-caps as every other label in the system. */
 .beat__tag {
   margin: 0 0 clamp(0.5rem, 1vw, 0.8rem);
   font-family: var(--micro), sans-serif;
@@ -728,8 +658,6 @@ body {
   color: rgba(255, 255, 255, 0.93);
   text-shadow: var(--lift-1);
 }
-
-/* ---- what you need ---- */
 
 .need {
   display: grid;
@@ -773,8 +701,6 @@ body {
   line-height: 1.35;
 }
 
-/* Struck through, because the point is that these are things you can put
-   down — not things Dorado is missing. */
 .need__list--not li {
   color: var(--paper-faint);
 }
@@ -786,10 +712,6 @@ body {
   text-underline-offset: 0;
 }
 
-/* ---- purpose ---- */
-
-/* Copy on the left, the app on the right. The one place on the page where
-   Dorado itself is the subject rather than the country it takes place in. */
 .showcase {
   display: grid;
   gap: clamp(3rem, 7vw, 6rem);
@@ -803,8 +725,6 @@ body {
   }
 }
 
-/* Three beats, one per line, each landing on its own full stop. The line
-   breaks are the sentence structure here, so they are marked up, not wrapped. */
 .display--triplet span {
   display: block;
   font-size: clamp(2rem, 4.6vw, 3.4rem);
@@ -819,10 +739,6 @@ body {
   color: var(--paper-dim);
 }
 
-/* ---- the devices ---- */
-
-/* Phones only. Phone and headphones is the entire requirement, so a tablet or
-   laptop frame here would be selling a build that does not exist. */
 .showcase__devices {
   display: flex;
   align-items: center;
@@ -841,8 +757,6 @@ body {
   box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.9);
 }
 
-/* The middle one stands forward; the outer two step back, which is the only
-   depth cue in the group and reads without any perspective trickery. */
 .device--lead {
   width: clamp(9.5rem, 30%, 15rem);
   z-index: 2;
@@ -875,8 +789,6 @@ body {
   background: rgba(184, 205, 199, 0.28);
 }
 
-/* The screen itself. Empty and saying so — a labelled hole, never a fake
-   product shot. Swap .shot__wait for an img.shot__img when a real one exists. */
 .shot {
   display: grid;
   place-items: center;
@@ -909,8 +821,6 @@ body {
   color: var(--paper-faint);
 }
 
-/* ---- alongside ---- */
-
 .alongside__marks {
   display: flex;
   align-items: center;
@@ -927,8 +837,6 @@ body {
 
 /* ============================== SIGNUP ============================== */
 
-/* What actually happens when you hand over an address, stated before the
-   field rather than in small print under it. */
 .promise {
   display: flex;
   flex-wrap: wrap;
@@ -1033,15 +941,11 @@ body {
   border-color: var(--gold);
 }
 
-/* In flight. Dimmed rather than greyed, so the label stays readable while the
-   address is on its way. */
 .signup__submit:disabled {
   cursor: progress;
   opacity: 0.62;
 }
 
-/* The honeypot, parked outside the viewport. Kept in the render tree on
-   purpose: a field that is display:none or hidden is one most bots skip. */
 .signup__trap {
   position: absolute;
   left: -9999px;
@@ -1166,8 +1070,6 @@ body {
   stroke-width: 1.5;
 }
 
-/* ---- the line: the demo's only instrument ---- */
-
 .wave {
   margin-top: clamp(1.4rem, 3vw, 2rem);
   border: 1px solid var(--hair);
@@ -1179,8 +1081,6 @@ body {
   width: 100%;
   height: clamp(7rem, 16vw, 11rem);
 }
-
-/* ---- transport ---- */
 
 .demo__transport {
   display: flex;
@@ -1222,8 +1122,6 @@ body {
   background: var(--hair);
 }
 
-/* Driven from the audio's own rAF loop, so it scales rather than resizing —
-   no transition either, because the frame loop already is the animation. */
 .demo__meter span {
   display: block;
   width: 100%;

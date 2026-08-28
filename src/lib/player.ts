@@ -3,33 +3,27 @@
  *
  * Signal chain:  <audio> -> MediaElementSource -> AnalyserNode -> destination
  *
- * The AnalyserNode exists purely so the waveform has something to draw; the
- * audio itself is the file, untouched. Everything is created on first play,
- * because browsers will not start an AudioContext without a user gesture and
- * createMediaElementSource can only be called once per element.
+ * The graph is built on first play: browsers will not start an AudioContext
+ * without a user gesture, and createMediaElementSource is once per element.
  */
 
-export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended';
+export type PlaybackState = 'idle' | 'loading' | 'playing' | 'buffering' | 'paused' | 'ended';
 
 export interface DemoFrame {
   /** Seconds played. */
   time: number;
-  /** Total length of the recording, or 0 before metadata has loaded. */
+  /** Total length, or 0 before metadata has loaded. */
   duration: number;
   /** 0..1 through the recording. */
   progress: number;
-  /** 0..1 overall RMS of the mix. */
-  level: number;
   /** Time-domain samples, -1..1 — the waveform's input. */
   samples: Float32Array;
 }
 
 export interface DemoPlayerOptions {
-  /** The element carrying the recording. */
   audio: HTMLAudioElement;
   /** Called once per animation frame while playing. */
   onFrame?: (frame: DemoFrame) => void;
-  /** Called when playback starts, stops or reaches the end. */
   onStateChange?: (state: PlaybackState) => void;
 }
 
@@ -48,17 +42,28 @@ export class DemoPlayer {
     this.options = options;
     this.audio = options.audio;
 
-    this.audio.addEventListener('play', () => {
+    // The recording streams, so state follows `playing` (sound is coming out)
+    // rather than `play` (the element was unpaused, possibly with no data yet).
+    this.audio.addEventListener('playing', () => {
       this.setState('playing');
       this.startLoop();
     });
+
+    // A dry buffer mid-stream fires `waiting`, never `pause`. Stopping the loop
+    // freezes the clock and meter where the audio ran out.
+    this.audio.addEventListener('waiting', () => {
+      if (this.state !== 'playing') return;
+      this.stopLoop();
+      this.setState('buffering');
+    });
+
     this.audio.addEventListener('pause', () => {
-      // `pause` also fires as the element ends; `ended` gets there first and
-      // has already settled the state, so don't overwrite it.
+      // `pause` also fires as the element ends; `ended` has already settled it.
       if (this.state === 'ended') return;
       this.stopLoop();
       this.setState('paused');
     });
+
     this.audio.addEventListener('ended', () => {
       this.stopLoop();
       this.setState('ended');
@@ -132,10 +137,6 @@ export class DemoPlayer {
     const samples = this.timeData;
     if (this.analyser) this.analyser.getFloatTimeDomainData(samples);
 
-    let sum = 0;
-    for (let i = 0; i < samples.length; i++) sum += samples[i] * samples[i];
-    const rms = samples.length === 0 ? 0 : Math.sqrt(sum / samples.length);
-
     const time = this.audio.currentTime;
     const duration = Number.isFinite(this.audio.duration) ? this.audio.duration : 0;
 
@@ -143,7 +144,6 @@ export class DemoPlayer {
       time,
       duration,
       progress: duration > 0 ? Math.min(1, time / duration) : 0,
-      level: Math.min(1, rms * 4.5),
       samples,
     };
   }

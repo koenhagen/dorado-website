@@ -16,8 +16,7 @@
     <link rel="canonical" href="https://dorado.run/"/>
     <meta name="theme-color" content="#0b1517"/>
 
-    <!-- Social preview. og:image must be absolute for every scraper that
-         matters, so these carry the full domain rather than a root path. -->
+    <!-- og:image must be absolute for every scraper that matters. -->
     <meta property="og:type" content="website"/>
     <meta property="og:site_name" content="Dorado"/>
     <meta property="og:locale" content="en"/>
@@ -72,8 +71,7 @@
             <stop offset="100%" stop-color="#e0a05a"/>
         </linearGradient>
 
-        <!-- The trail up to the city. Read bottom to top, because that is the
-             direction it is walked: solid at your feet, gone by the mist. -->
+        <!-- The trail up to the city. Read bottom to top: it is walked upward. -->
         <linearGradient id="trail-fade" x1="0" y1="1" x2="0" y2="0">
             <stop offset="0%" stop-color="#f0c268" stop-opacity="0.85"/>
             <stop offset="62%" stop-color="#f0c268" stop-opacity="0.62"/>
@@ -100,8 +98,7 @@
             <stop offset="100%" stop-color="#5c5468" stop-opacity="0"/>
         </linearGradient>
 
-        <!-- The shadowed far basin. It exists so the centre of the vista has a
-             dark passage for the headline to sit in — scene, not scrim. -->
+        <!-- A dark passage for the headline to sit in — scene, not scrim. -->
         <radialGradient id="basin-shade" cx="50%" cy="46%" r="62%">
             <stop offset="0%" stop-color="#0a1a26" stop-opacity="0.5"/>
             <stop offset="55%" stop-color="#0a1a26" stop-opacity="0.26"/>
@@ -145,9 +142,8 @@
                 role="img"
                 aria-label="Dawn over an open jungle basin, seen from a clearing between two forested bluffs. A footpath climbs out of the foreground toward a small gold city catching the first light on a distant spur."
         >
-            <!-- Depth planes. Each drifts at its own rate (see startParallax);
-                 data-depth 0 is the far air, 1 is the ground at your feet and is
-                 the reference that does not move relative to the frame. -->
+            <!-- Depth planes (see startParallax): data-depth 0 is the far air,
+                 1 the near ground, which is the reference. -->
             <rect width="1600" height="900" fill="url(#sky-dawn)"/>
 
             <g class="plane" data-depth="0.06">
@@ -195,7 +191,7 @@
                 <path class="range range--near"
                       d="M0 900V690l124-30 104 24 116-40 122 32 108-34 130 28 104-38 124 34 110-26 126 38 104-30 128 34 100-24 100 28v404z"
                       fill="#35604d"/>
-                <!-- The way to the city: out of the ground at your feet,
+                <!-- Out of the ground at your feet,
                      switching back up the near slope, thinning into the mist
                      before it reaches the spur. It is the run, drawn. -->
                 <path class="trail"
@@ -241,7 +237,7 @@
             <h1 class="display display--hero">Your run isn't just exercise. </h1>
 
 
-            <!-- Promise and action are one unit: the sentence is the reason to
+            <!-- The sentence is the reason to
                  press the button, so they rise together and sit close. -->
             <div class="vista__act">
                 <p class="vista__line">It's an expedition.</p>
@@ -284,19 +280,9 @@
                 </p>
             </div>
 
-            <!--
-              APP SCREENSHOTS GO HERE.
-
-              Three phone frames at the real 19.5:9 ratio. All three screens are empty
-              and labelled as such; nothing here pretends to be a product shot.
-
-              To drop a real screenshot in, replace the span.shot__wait inside a
-              .shot with an image element:
-
-                  class="shot__img"  src="./screens/phone.png"  alt="…"
-
-              The frame, crop and corner radius are already handled by .shot__img.
-            -->
+            <!-- Empty phone frames at 19.5:9 — nothing pretends to be a product
+                 shot. To drop one in, swap a .shot's span.shot__wait for
+                 <img class="shot__img" src="…" alt="…">. -->
             <div class="showcase__devices" data-reveal>
                 <div class="device device--aside">
                     <div class="shot">
@@ -556,7 +542,7 @@
                     <button type="submit" class="signup__submit">Join the beta</button>
                 </div>
 
-                <!-- Honeypot. Off-screen and out of the tab order, so no person
+                <!-- Honeypot: off-screen and out of the tab order, so no person
                      ever meets it; scripts that fill every field in the form
                      do, and the endpoint drops whatever arrives with it set.
                      Not display:none — the crude bots skip those. -->
@@ -620,18 +606,19 @@
             </button>
         </header>
 
-        <!-- The line. The only instrument in the demo: one gold trace straight
+        <!-- The only instrument in the demo: one gold trace straight
              off the analyser, flat when nothing is playing. -->
         <div class="wave">
             <canvas class="wave__canvas" id="demo-waveform" role="img"
                     aria-label="Live waveform of the demo audio"></canvas>
         </div>
 
-        <!-- The recording. Swap the file here; nothing else needs to change. -->
-        <!-- Relative on purpose: Vite rewrites public-asset paths on link and
-             script tags, but not on audio, so a root-absolute path here would
-             404 wherever the site is not served from the domain apex. -->
-        <audio id="demo-audio" preload="auto" src="./audio/demo-placeholder.wav"></audio>
+        <!-- Swap the file here; nothing else needs to change. The path is
+             relative on purpose: Vite rewrites public-asset paths on link and
+             script tags but not on audio, so a root-absolute one would 404
+             wherever the site is not served from the domain apex.
+             Opening the overlay starts the download and plays it — see main.ts. -->
+        <audio id="demo-audio" preload="metadata" src="./audio/demo.wav"></audio>
 
         <div class="demo__transport">
             <button type="button" class="demo__play" id="demo-toggle" data-overlay-focus>
