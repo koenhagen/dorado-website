@@ -7,12 +7,6 @@
    nothing but hairlines. No cards, no panels, no boxes anywhere.
    ========================================================================== */
 
-@property --par {
-  syntax: '<length>';
-  inherits: false;
-  initial-value: 0px;
-}
-
 @property --hold {
   syntax: '<time>';
   inherits: false;
@@ -47,6 +41,11 @@
   --micro: Jost, 'Futura', 'Century Gothic', system-ui, sans-serif;
 
   --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --frame: 1920px;
+  /* The page's width, and the height of the art canvas drawn at it. */
+  --art-w: min(100vw, var(--frame));
+  /* Where a scene's art ends (see .stretch). */
+  --art-end: calc(var(--art-w) * 2.1703 * 0.78);
   --rhythm: clamp(4.5rem, 11vw, 10rem);
 }
 
@@ -70,12 +69,6 @@ body {
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-}
-
-.defs {
-  position: absolute;
-  width: 0;
-  height: 0;
 }
 
 [hidden] {
@@ -226,34 +219,236 @@ body {
 
 /* ============================== VISTAS ============================== */
 
+/* The page stops widening at --frame; past that the sides are bars of the
+   body colour. */
+.rim,
+main,
+.foot {
+  max-width: var(--frame);
+  margin-inline: auto;
+}
+
+/* A stretch is one scene and the copy that runs over it. The art is drawn at
+   the page's width, uncropped down to 78% of its canvas (--art-end), just below
+   where the front layer's ground settles; the rest of the canvas is solid
+   ground. The copy flows as it would on a plain page. Beyond the art the
+   stretch is a gradient between this scene's colour and the next one's, at
+   least --tail long, however much copy runs onto it.
+
+   The first two hang from the top: the art, then the gradient on from its
+   front layer. The last is the same reversed: the gradient leads in and the
+   art stands on the bottom. The copy is spread evenly through all three by
+   spreadCopy() in main.ts. */
+.stretch {
+  --tail: clamp(12rem, 30vh, 20rem);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(var(--art-end) + var(--tail));
+  background: linear-gradient(180deg, var(--from), var(--to)) 0 var(--art-end) / 100%
+    calc(100% - var(--art-end)) no-repeat;
+}
+
+.stretch--hero {
+  --from: #101d21;
+  --to: #22443f;
+}
+
+/* Two gradients meet between these two, split at the midpoint colour. */
+.stretch--how {
+  --from: #22443f;
+  --to: #172d33;
+}
+
+.stretch--beta {
+  --from: #172d33;
+  --to: #0c1526;
+  background-position: 0 0;
+}
+
 .vista {
+  position: relative;
+  padding: clamp(7rem, 14vh, 11rem) var(--gutter) clamp(6rem, 12vh, 9rem);
+}
+
+/* The hero's copy holds the first screen, as it always has. */
+.vista--hero {
+  padding: 0;
+}
+
+.vista__screen {
   position: relative;
   min-height: 100svh;
   display: grid;
   place-items: center;
   padding: clamp(7rem, 14vh, 11rem) var(--gutter) clamp(6rem, 12vh, 9rem);
-  overflow: hidden;
-  isolation: isolate;
 }
 
 .vista__scene {
-  /* The 14% overshoot is the room the parallax lag is clamped inside.
-     Planes are deliberately not promoted: an element inside an SVG cannot get
-     its own compositor layer, so will-change there is pure cost. */
+  /* Planes are deliberately not promoted: one composited layer for the scene
+     is enough, and will-change on each plane is pure cost. */
   position: absolute;
-  top: -14%;
+  top: 0;
   left: 0;
   right: 0;
-  width: 100%;
-  height: 128%;
+  height: var(--art-end);
+  overflow: hidden;
   z-index: -1;
-  transform: translate3d(0, var(--par, 0px), 0);
-  will-change: transform;
+  container-type: size;
+  --art-h: calc(100cqw * 2.1703);
+}
+
+.stretch--beta .vista__scene {
+  top: auto;
+  bottom: 0;
+}
+
+.vista__sky,
+.vista__scene .plane,
+.layer,
+.vista__shade {
+  position: absolute;
+  inset: 0;
+}
+
+/* Planes only ever rise (see startParallax), by at most 8% of the scene, so
+   each reaches further than that below it and its ground comes up with it. */
+.vista__scene .plane {
+  bottom: -10%;
+}
+
+/* The sky ends where the ground begins; below that the ground covers it. */
+.vista__sky {
+  bottom: auto;
+  height: calc(var(--art-h) * 0.8);
+}
+
+/* A silhouette from assets/svg, tinted by --tint, drawn at the scene's
+   width from its top. The second mask is solid ground from just above where
+   the scene is cut off (78% of the canvas) to the bottom of the plane: a front
+   layer whose ground dips past that line (terra firme 3 does at its edges)
+   would otherwise let the layer behind show along the scene's last edge,
+   against a gradient in the front's colour. It starts below terra firme 3's
+   flat ground (76.6%), so it never straightens a contour that is drawn. */
+.layer {
+  background: var(--tint);
+  -webkit-mask-image: var(--art), -webkit-linear-gradient(top, #000 0 0);
+  mask-image: var(--art), linear-gradient(180deg, #000 0 0);
+  -webkit-mask-size: 100% auto, 100% 100%;
+  mask-size: 100% auto, 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0, 0 calc(var(--art-h) * 0.77);
+  mask-position: 0 0, 0 calc(var(--art-h) * 0.77);
+}
+
+
+.layer--dorado-1 {
+  --art: url('../assets/svg/dorado_1.svg');
+}
+.layer--dorado-2 {
+  --art: url('../assets/svg/dorado_2.svg');
+}
+.layer--terra-3 {
+  --art: url('../assets/svg/terra_firme_3.svg');
+}
+.layer--terra-4 {
+  --art: url('../assets/svg/terra_firme_4.svg');
+}
+.layer--terra-5 {
+  --art: url('../assets/svg/terra_firme_5.svg');
+}
+.layer--basecamp-1 {
+  --art: url('../assets/svg/basecamp_1.svg');
+}
+.layer--basecamp-2 {
+  --art: url('../assets/svg/basecamp_2.svg');
+}
+.layer--basecamp-3 {
+  --art: url('../assets/svg/basecamp_3.svg');
+}
+
+/* Skies: cold at altitude, warm toward the horizon at dawn and dusk. */
+.stretch--hero .vista__sky {
+  background: linear-gradient(#12293f, #1f4a6b 24%, #417a99 46%, #7fadc0 63%, #c9b8ad 76%, #e9a086 86%, #f0bb95);
+}
+.stretch--how .vista__sky {
+  background: linear-gradient(#2b5f7d, #6ea3b6 40%, #bcd5d2 78%, #dfe8dc);
+}
+.stretch--beta .vista__sky {
+  background: linear-gradient(#0c1526, #1d2745 30%, #46375a 58%, #8a4f54 78%, #c9743f 92%, #e0a05a);
+}
+
+/* Tints step from the colour of the far air to near black, per time of day. */
+.stretch--hero .layer--dorado-1 { --tint: #c29a52; }
+.stretch--hero .layer--dorado-2 { --tint: #a47b36; }
+.stretch--hero .layer--terra-3 { --tint: #35604d; }
+.stretch--hero .layer--terra-4 { --tint: #1f4438; }
+.stretch--hero .layer--terra-5 { --tint: #101d21; }
+
+.stretch--how .layer--terra-5 { --tint: #5c8467; }
+.stretch--how .layer--terra-4 { --tint: #3d6a51; }
+.stretch--how .layer--terra-3 { --tint: #22443f; }
+
+.stretch--beta .layer--basecamp-1 { --tint: #3a3b56; }
+.stretch--beta .layer--basecamp-3 { --tint: #20293a; }
+.stretch--beta .layer--basecamp-2 { --tint: #070c14; }
+
+/* Valley mist: an actual band of air, not a blur filter. */
+.mist {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: calc(var(--art-h) * 0.6);
+  height: calc(var(--art-h) * 0.13);
+  background: linear-gradient(
+    180deg,
+    rgba(205, 219, 220, 0) 0%,
+    rgba(213, 224, 222, 0.62) 42%,
+    rgba(195, 211, 211, 0) 100%
+  );
+}
+
+.mist--dusk {
+  background: linear-gradient(
+    180deg,
+    rgba(107, 96, 121, 0) 0%,
+    rgba(125, 107, 126, 0.5) 46%,
+    rgba(92, 84, 104, 0) 100%
+  );
+}
+
+/* A dark passage for the headline to sit in — scene, not scrim. */
+.vista__shade {
+  background: radial-gradient(
+    62% min(62%, 110svh) at 50% var(--shade-at, 60svh),
+    rgba(10, 26, 38, 0.5) 0%,
+    rgba(10, 26, 38, 0.26) 55%,
+    rgba(10, 26, 38, 0) 100%
+  );
+  /* Gone before the ground: on a short (phone) scene it would otherwise
+     darken the art's foot, and the gradient after it starts from the plain
+     ground colour. */
+  -webkit-mask-image: linear-gradient(#000 60%, transparent 85%);
+  mask-image: linear-gradient(#000 60%, transparent 85%);
+}
+
+.stretch--hero .vista__shade {
+  --shade-at: 46svh;
+}
+
+.vista__shade--soft {
+  opacity: 0.7;
+}
+
+.vista__shade--deep {
+  opacity: 0.8;
 }
 
 .vista__stage {
   position: relative;
   width: 100%;
+  margin-inline: auto;
   max-width: 62rem;
   text-align: center;
 }
@@ -354,8 +549,8 @@ body {
 }
 
 .mark--spotify {
-  -webkit-mask-image: url('../assets/Spotify_logo_with_text.svg');
-  mask-image: url('../assets/Spotify_logo_with_text.svg');
+  -webkit-mask-image: url('../assets/Spotify_logo.svg');
+  mask-image: url('../assets/Spotify_logo.svg');
 }
 
 .mark--strava {
@@ -422,7 +617,7 @@ body {
     margin-top: clamp(1.4rem, 4vw, 2rem);
   }
 
-  .vista--hero {
+  .vista--hero .vista__screen {
     padding-bottom: clamp(2rem, 5vh, 3rem);
   }
 }
@@ -431,8 +626,7 @@ body {
   animation: drift 90s ease-in-out infinite alternate;
 }
 
-.haze,
-.haze--far {
+.mist {
   animation: drift 64s ease-in-out infinite alternate-reverse;
 }
 
@@ -442,33 +636,6 @@ body {
   }
   to {
     transform: translateX(1.6%);
-  }
-}
-
-.bloom {
-  animation: breathe 14s ease-in-out infinite alternate;
-  transform-origin: center;
-}
-
-@keyframes breathe {
-  from {
-    opacity: 0.26;
-  }
-  to {
-    opacity: 0.44;
-  }
-}
-
-.city__gold {
-  animation: catch 9s ease-in-out infinite alternate;
-}
-
-@keyframes catch {
-  from {
-    opacity: 0.55;
-  }
-  to {
-    opacity: 1;
   }
 }
 
@@ -487,12 +654,11 @@ body {
   }
 }
 
-.vista--hero .vista__scene {
+.stretch--hero .vista__scene {
+  transform-origin: 50% 0;
   animation: settle 1900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* The standalone `scale` property, not transform: scale() — transform belongs
-   to the parallax and these two have to compose rather than overwrite. */
 @keyframes settle {
   from {
     scale: 1.06;
@@ -564,16 +730,15 @@ body {
 
 .ground {
   padding: var(--rhythm) var(--gutter);
-  background: var(--ink);
-}
-
-.ground--purpose {
-  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-lift) 100%);
 }
 
 .ground--alongside {
-  background: var(--ink-lift);
   text-align: center;
+}
+
+/* Copy that runs over a scene lifts off it the way the headlines do. */
+.stretch .ground {
+  text-shadow: var(--lift-1);
 }
 
 .wrap {

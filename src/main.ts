@@ -6,10 +6,16 @@ import { DemoPlayer, formatTime, type DemoFrame } from './lib/player';
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* --- parallax ---
-   Two offsets compose: the whole scene lags the page (--par), then each depth
-   plane catches back up weighted by depth (0 = far air, 1 = the near ground).
-   Sign matters — `offset` shrinks as the vista rises, so following it moves
-   *with* the page; the scene lag is negated against it so the far air trails.
+   The near ground (depth 1) is fixed to the page; the farther a plane, the
+   higher it is lifted while the scene is still well below the bottom of the
+   screen, and it sinks back as the scene is scrolled through, so the far air
+   trails the page. By the time the scene's foot reaches the bottom of the
+   screen every plane is where it was drawn, which keeps the near ground from
+   sliding over the plants behind it just where the scene meets what follows.
+
+   Planes only ever rise: the art is cut off at the top of its canvas, so
+   lowering a plane would open a gap above it, while below there is ground to
+   spare (see `.vista__scene .plane` in style.css).
 
    Reads and writes run in separate passes: a getBoundingClientRect after a
    style write forces a synchronous layout flush.
@@ -30,10 +36,7 @@ interface Plane {
 
 interface Scene {
   el: Movable;
-  frame: HTMLElement;
   planes: Plane[];
-  /** Last `--par` written, same reason. */
-  written: string;
 }
 
 function startParallax() {
@@ -41,28 +44,21 @@ function startParallax() {
 
   const scenes: Scene[] = [];
   for (const el of document.querySelectorAll<Movable>('.vista__scene')) {
-    const frame = el.parentElement;
-    if (!frame) continue;
     const planes = Array.from(el.querySelectorAll<Movable>('[data-depth]')).map((node) => ({
       el: node,
       depth: Number(node.dataset.depth ?? 1),
       written: '',
     }));
-    scenes.push({ el, frame, planes, written: '' });
+    scenes.push({ el, planes });
   }
   if (scenes.length === 0) return;
 
-  /** Scene lag, as a fraction of scroll. */
-  const SCENE_LAG = 0.05;
   /**
-   * Plane spread at a full viewport of travel. Above ~270 the hero's mid range
-   * sinks behind the near one and the depth reads backwards.
-   *
-   * Written as px, which inside an inline SVG is one viewBox unit. Move the
-   * scenes to external SVG files and planes become HTML elements, where a px is
-   * a screen px — this will need re-deriving against the viewport.
+   * The farthest plane's lift, as a share of the scene's height, so it holds
+   * the same on a phone as on a desktop. Each plane reaches 10% below its
+   * scene, so this must stay under that.
    */
-  const SPREAD = 200;
+  const SPREAD = 0.08;
 
   const onScreen = new Set<Scene>();
   const byElement = new Map<Element, Scene>(scenes.map((scene) => [scene.el, scene]));
@@ -94,7 +90,6 @@ function startParallax() {
 
   interface Reading {
     scene: Scene;
-    lag: number;
     spread: number;
   }
 
@@ -102,34 +97,22 @@ function startParallax() {
 
   function apply() {
     const viewport = window.innerHeight;
-    const middle = viewport / 2;
 
     // Read pass: measure everything before writing anything.
     readings.length = 0;
     for (const scene of onScreen) {
-      const box = scene.frame.getBoundingClientRect();
-      // Positive below the viewport centre, negative once past it.
-      const offset = box.top + box.height / 2 - middle;
-
-      const limit = box.height * 0.13;
-      readings.push({
-        scene,
-        lag: Math.max(-limit, Math.min(limit, -offset * SCENE_LAG)),
-        spread: Math.max(-1, Math.min(1, offset / viewport)) * SPREAD,
-      });
+      const box = scene.el.getBoundingClientRect();
+      // How far the scene's foot still is below the bottom of the screen, in
+      // scene heights: 0 once it is on screen.
+      const ahead = Math.max(0, Math.min(1, (box.bottom - viewport) / box.height));
+      readings.push({ scene, spread: -ahead * SPREAD * box.height });
     }
 
     // Write pass. A plane is not its own compositor layer — touching one
     // invalidates the whole scene — so unchanged values are left alone.
-    for (const { scene, lag, spread } of readings) {
-      const par = `${lag.toFixed(1)}px`;
-      if (par !== scene.written) {
-        scene.el.style.setProperty('--par', par);
-        scene.written = par;
-      }
-
+    for (const { scene, spread } of readings) {
       for (const plane of scene.planes) {
-        const transform = `translateY(${(spread * plane.depth).toFixed(2)}px)`;
+        const transform = `translateY(${(spread * (1 - plane.depth)).toFixed(2)}px)`;
         if (transform === plane.written) continue;
         plane.el.style.transform = transform;
         plane.written = transform;
@@ -175,6 +158,111 @@ function startReveals() {
   );
 
   items.forEach((item) => watcher.observe(item));
+}
+
+/* --- spacing ---
+   The art fixes how tall each stretch is, and the copy is spread through that
+   height so the space between consecutive blocks is the same all the way down:
+   from the hero's first screen to "Lace up", on through each section, with
+   half a gap left under the last one. The gap depends on how tall the copy
+   is, which CSS cannot know, so it is measured here and written as margins.
+
+   Where the copy is longer than the art (a phone) there is no room to spread
+   into; the stretches grow with the copy instead, and every gap is opened up
+   to match the widest one the page already has. */
+
+function spreadCopy() {
+  const stretches = Array.from(document.querySelectorAll<HTMLElement>('.stretch'));
+  const sections = stretches.flatMap((stretch) =>
+    Array.from(stretch.querySelectorAll<HTMLElement>(':scope > section')),
+  );
+  if (sections.length < 2) return;
+
+  function apply() {
+    // Measure the natural layout first.
+    sections.forEach((section) => (section.style.marginTop = ''));
+
+    const top = (el: Element) => el.getBoundingClientRect().top + window.scrollY;
+    const bottom = (el: Element) => el.getBoundingClientRect().bottom + window.scrollY;
+    const end = bottom(stretches[stretches.length - 1]);
+
+    // The hero holds its first screen; everything after it is spread.
+    const [hero, ...rest] = sections;
+    const blocks = rest.map((section) => {
+      const copy = section.querySelector('.vista__stage, .wrap') ?? section;
+      return {
+        section,
+        stretch: section.parentElement as HTMLElement,
+        above: top(copy) - top(section),
+        copy: bottom(copy) - top(copy),
+        below: bottom(section) - bottom(copy),
+      };
+    });
+
+    const last = blocks[blocks.length - 1];
+    const copyTotal = blocks.reduce((sum, block) => sum + block.copy, 0);
+    const room = end - bottom(hero) - copyTotal - last.below;
+    const gap = Math.floor(room / (blocks.length + 0.5));
+
+    // Each stretch's top, before any margins: the art sets their heights.
+    const stretchTop = new Map(stretches.map((stretch) => [stretch, top(stretch)]));
+
+    const gaps = () =>
+      blocks.map((block, i) => {
+        const before = i === 0 ? bottom(hero) : top(blocks[i - 1].section) + blocks[i - 1].above + blocks[i - 1].copy;
+        return top(block.section) + block.above - before;
+      });
+    // Opening one gap can be absorbed by a stretch that had art to spare below
+    // its copy, so measure again and top up until they all match.
+    const fallback = () => {
+      const added = blocks.map(() => 0);
+      for (let pass = 0; pass < 4; pass++) {
+        const now = gaps();
+        const widest = Math.max(...now);
+        if (now.every((gap) => widest - gap < 1)) return;
+        blocks.forEach((block, i) => {
+          added[i] += widest - now[i];
+          block.section.style.marginTop = `${added[i]}px`;
+        });
+      }
+    };
+
+    const margins: number[] = [];
+    let copyBottom = bottom(hero);
+    let cursor = copyBottom;
+    let current = hero.parentElement as HTMLElement;
+    for (const block of blocks) {
+      if (block.stretch !== current) {
+        // The previous stretch has to hold its own copy.
+        if (cursor > stretchTop.get(block.stretch)!) return fallback();
+        current = block.stretch;
+        cursor = stretchTop.get(current)!;
+      }
+      const sectionTop = copyBottom + gap - block.above;
+      const margin = sectionTop - cursor;
+      if (margin < 0) return fallback();
+      margins.push(margin);
+      cursor = sectionTop + block.above + block.copy + block.below;
+      copyBottom = sectionTop + block.above + block.copy;
+    }
+    if (cursor > end) return fallback();
+
+    blocks.forEach((block, i) => (block.section.style.marginTop = `${margins[i]}px`));
+  }
+
+  let queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      apply();
+    });
+  }
+
+  apply();
+  document.fonts.ready.then(schedule);
+  window.addEventListener('resize', schedule);
 }
 
 /* ------------------------------------------------------------------ form --- */
@@ -371,6 +459,7 @@ function wireDemo() {
   toBeta?.addEventListener('click', () => overlay.hide());
 }
 
+spreadCopy();
 startParallax();
 startReveals();
 wireForm();
