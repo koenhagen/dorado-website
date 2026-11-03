@@ -311,10 +311,11 @@ main,
   inset: 0;
 }
 
-/* Planes only ever rise (see startParallax), by at most 8% of the scene, so
-   each reaches further than that below it and its ground comes up with it. */
+/* Planes only ever rise (see startParallax), by at most a quarter of the
+   scene, so each reaches further than that below it and its ground comes up
+   with it. */
 .vista__scene .plane {
-  bottom: -10%;
+  bottom: -30%;
 }
 
 /* The sky ends where the ground begins; below that the ground covers it. */
@@ -332,8 +333,8 @@ main,
    flat ground (76.6%), so it never straightens a contour that is drawn. */
 .layer {
   background: var(--tint);
-  -webkit-mask-image: var(--art), -webkit-linear-gradient(top, #000 0 0);
-  mask-image: var(--art), linear-gradient(180deg, #000 0 0);
+  -webkit-mask-image: var(--art), -webkit-linear-gradient(180deg, #000, #000);
+  mask-image: var(--art), linear-gradient(180deg, #000, #000);
   -webkit-mask-size: 100% auto, 100% 100%;
   mask-size: 100% auto, 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -370,13 +371,13 @@ main,
 
 /* Skies: cold at altitude, warm toward the horizon at dawn and dusk. */
 .stretch--hero .vista__sky {
-  background: linear-gradient(#12293f, #1f4a6b 24%, #417a99 46%, #7fadc0 63%, #c9b8ad 76%, #e9a086 86%, #f0bb95);
+  background: linear-gradient(180deg, #12293f, #1f4a6b 24%, #417a99 46%, #7fadc0 63%, #c9b8ad 76%, #e9a086 86%, #f0bb95);
 }
 .stretch--how .vista__sky {
-  background: linear-gradient(#2b5f7d, #6ea3b6 40%, #bcd5d2 78%, #dfe8dc);
+  background: linear-gradient(180deg, #2b5f7d, #6ea3b6 40%, #bcd5d2 78%, #dfe8dc);
 }
 .stretch--beta .vista__sky {
-  background: linear-gradient(#0c1526, #1d2745 30%, #46375a 58%, #8a4f54 78%, #c9743f 92%, #e0a05a);
+  background: linear-gradient(180deg, #0c1526, #1d2745 30%, #46375a 58%, #8a4f54 78%, #c9743f 92%, #e0a05a);
 }
 
 /* Tints step from the colour of the far air to near black, per time of day. */
@@ -421,17 +422,18 @@ main,
 /* A dark passage for the headline to sit in — scene, not scrim. */
 .vista__shade {
   background: radial-gradient(
-    62% min(62%, 110svh) at 50% var(--shade-at, 60svh),
-    rgba(10, 26, 38, 0.5) 0%,
-    rgba(10, 26, 38, 0.26) 55%,
-    rgba(10, 26, 38, 0) 100%
+          62% min(62%, 110svh) at 50% var(--shade-at, 60svh),
+          rgba(10, 26, 38, 0.5) 0%,
+          rgba(10, 26, 38, 0.26) 55%,
+          rgba(10, 26, 38, 0) 100%
   );
   /* Gone before the ground: on a short (phone) scene it would otherwise
      darken the art's foot, and the gradient after it starts from the plain
      ground colour. */
-  -webkit-mask-image: linear-gradient(#000 60%, transparent 85%);
-  mask-image: linear-gradient(#000 60%, transparent 85%);
+  -webkit-mask-image: -webkit-linear-gradient(180deg, #000 60%, transparent 85%);
+  mask-image: linear-gradient(180deg, #000 60%, transparent 85%);
 }
+
 
 .stretch--hero .vista__shade {
   --shade-at: 46svh;

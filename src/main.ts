@@ -6,16 +6,11 @@ import { DemoPlayer, formatTime, type DemoFrame } from './lib/player';
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* --- parallax ---
-   The near ground (depth 1) is fixed to the page; the farther a plane, the
-   higher it is lifted while the scene is still well below the bottom of the
-   screen, and it sinks back as the scene is scrolled through, so the far air
-   trails the page. By the time the scene's foot reaches the bottom of the
-   screen every plane is where it was drawn, which keeps the near ground from
-   sliding over the plants behind it just where the scene meets what follows.
-
-   Planes only ever rise: the art is cut off at the top of its canvas, so
-   lowering a plane would open a gap above it, while below there is ground to
-   spare (see `.vista__scene .plane` in style.css).
+   Each depth plane rises as its vista is scrolled through, weighted by depth
+   (0 = far air, 1 = the near ground), so the near ground outruns the page and
+   the far air trails it. Planes only ever rise: the art is cut off at the top
+   of its canvas, so lowering a plane would open a gap above it, while below
+   there is ground to spare (see `.vista__scene .plane` in style.css).
 
    Reads and writes run in separate passes: a getBoundingClientRect after a
    style write forces a synchronous layout flush.
@@ -36,6 +31,7 @@ interface Plane {
 
 interface Scene {
   el: Movable;
+  frame: HTMLElement;
   planes: Plane[];
 }
 
@@ -44,21 +40,24 @@ function startParallax() {
 
   const scenes: Scene[] = [];
   for (const el of document.querySelectorAll<Movable>('.vista__scene')) {
+    const frame = el.parentElement;
+    if (!frame) continue;
     const planes = Array.from(el.querySelectorAll<Movable>('[data-depth]')).map((node) => ({
       el: node,
       depth: Number(node.dataset.depth ?? 1),
       written: '',
     }));
-    scenes.push({ el, planes });
+    scenes.push({ el, frame, planes });
   }
   if (scenes.length === 0) return;
 
   /**
-   * The farthest plane's lift, as a share of the scene's height, so it holds
-   * the same on a phone as on a desktop. Each plane reaches 10% below its
-   * scene, so this must stay under that.
+   * How far the near ground rises over the whole of its vista, as a share of
+   * the scene's height: a fixed distance that reads on a phone is lost in a
+   * desktop scene three or four times as tall. Each plane reaches 30% below
+   * its scene, so this must stay under that.
    */
-  const SPREAD = 0.08;
+  const SPREAD = 0.25;
 
   const onScreen = new Set<Scene>();
   const byElement = new Map<Element, Scene>(scenes.map((scene) => [scene.el, scene]));
@@ -101,18 +100,20 @@ function startParallax() {
     // Read pass: measure everything before writing anything.
     readings.length = 0;
     for (const scene of onScreen) {
-      const box = scene.el.getBoundingClientRect();
-      // How far the scene's foot still is below the bottom of the screen, in
-      // scene heights: 0 once it is on screen.
-      const ahead = Math.max(0, Math.min(1, (box.bottom - viewport) / box.height));
-      readings.push({ scene, spread: -ahead * SPREAD * box.height });
+      const box = scene.frame.getBoundingClientRect();
+      // 0 as the vista's top enters from below, 1 as its bottom leaves above.
+      const travel = (viewport - box.top) / (box.height + viewport);
+      readings.push({
+        scene,
+        spread: -Math.max(0, Math.min(1, travel)) * SPREAD * scene.el.getBoundingClientRect().height,
+      });
     }
 
     // Write pass. A plane is not its own compositor layer — touching one
     // invalidates the whole scene — so unchanged values are left alone.
     for (const { scene, spread } of readings) {
       for (const plane of scene.planes) {
-        const transform = `translateY(${(spread * (1 - plane.depth)).toFixed(2)}px)`;
+        const transform = `translateY(${(spread * plane.depth).toFixed(2)}px)`;
         if (transform === plane.written) continue;
         plane.el.style.transform = transform;
         plane.written = transform;
