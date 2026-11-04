@@ -203,7 +203,7 @@ function spreadCopy() {
     const last = blocks[blocks.length - 1];
     const copyTotal = blocks.reduce((sum, block) => sum + block.copy, 0);
     const room = end - bottom(hero) - copyTotal - last.below;
-    const gap = Math.floor(room / (blocks.length + 0.5));
+    let gap = Math.floor(room / (blocks.length + 0.5));
 
     // Each stretch's top, before any margins: the art sets their heights.
     const stretchTop = new Map(stretches.map((stretch) => [stretch, top(stretch)]));
@@ -228,27 +228,44 @@ function spreadCopy() {
       }
     };
 
-    const margins: number[] = [];
-    let copyBottom = bottom(hero);
-    let cursor = copyBottom;
-    let current = hero.parentElement as HTMLElement;
-    for (const block of blocks) {
-      if (block.stretch !== current) {
-        // The previous stretch has to hold its own copy.
-        if (cursor > stretchTop.get(block.stretch)!) return fallback();
-        current = block.stretch;
-        cursor = stretchTop.get(current)!;
+    /** The margins for a gap, or how much wider it must be for a block to fit. */
+    const layout = (gap: number) => {
+      const margins: number[] = [];
+      let copyBottom = bottom(hero);
+      let cursor = copyBottom;
+      let current = hero.parentElement as HTMLElement;
+      // How far stretches growing around their copy have pushed the rest down.
+      let pushed = 0;
+      for (const [i, block] of blocks.entries()) {
+        if (block.stretch !== current) {
+          // A stretch grows to hold its own copy, carrying the rest of the page
+          // down with it, so the gap can stay the same all the way.
+          pushed = Math.max(pushed, cursor - stretchTop.get(block.stretch)!);
+          current = block.stretch;
+          cursor = stretchTop.get(current)! + pushed;
+        }
+        const sectionTop = copyBottom + gap - block.above;
+        const margin = sectionTop - cursor;
+        // Too early to start inside its stretch. Every gap before it widens to
+        // bring it down, which is why the shortfall is shared between them.
+        if (margin < 0) return { raise: Math.ceil(-margin / (i + 1)) };
+        margins.push(margin);
+        cursor = sectionTop + block.above + block.copy + block.below;
+        copyBottom = sectionTop + block.above + block.copy;
       }
-      const sectionTop = copyBottom + gap - block.above;
-      const margin = sectionTop - cursor;
-      if (margin < 0) return fallback();
-      margins.push(margin);
-      cursor = sectionTop + block.above + block.copy + block.below;
-      copyBottom = sectionTop + block.above + block.copy;
-    }
-    if (cursor > end) return fallback();
+      return cursor > end + pushed ? { raise: 0 } : { raise: 0, margins };
+    };
 
-    blocks.forEach((block, i) => (block.section.style.marginTop = `${margins[i]}px`));
+    for (let pass = 0; pass < 8; pass++) {
+      const { raise, margins } = layout(gap);
+      if (margins) {
+        blocks.forEach((block, i) => (block.section.style.marginTop = `${margins[i]}px`));
+        return;
+      }
+      if (!raise) break;
+      gap += raise;
+    }
+    fallback();
   }
 
   let queued = false;
