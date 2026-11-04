@@ -38,7 +38,7 @@
 
   --display: 'Sorts Mill Goudy', 'Hoefler Text', Georgia, serif;
   --body: Faustina, Georgia, 'Times New Roman', serif;
-  --micro: Jost, 'Futura', 'Century Gothic', system-ui, sans-serif;
+  --micro: var(--body);
 
   --gutter: clamp(1.25rem, 5vw, 4.5rem);
   --frame: 1920px;
@@ -114,7 +114,7 @@ body {
 
 .eyebrow {
   margin: 0 0 clamp(1rem, 2vw, 1.6rem);
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.42em;
@@ -180,7 +180,7 @@ body {
 }
 
 .rim__nav a {
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.82rem;
   font-weight: 300;
   letter-spacing: 0.06em;
@@ -539,7 +539,7 @@ main,
 
 .vista__micro {
   margin: 1rem 0 0;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.76rem;
   font-weight: 300;
   letter-spacing: 0.14em;
@@ -550,7 +550,7 @@ main,
 
 .listen {
   padding: 1.05rem 2.6rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: clamp(0.82rem, 1.3vw, 0.92rem);
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -586,7 +586,7 @@ main,
 }
 
 .supports__word {
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.7rem;
   font-weight: 300;
   letter-spacing: 0.26em;
@@ -639,7 +639,7 @@ main,
 
 .place__name {
   display: block;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.82rem;
   font-weight: 400;
   letter-spacing: 0.05em;
@@ -652,7 +652,7 @@ main,
   align-items: center;
   gap: 0.35rem;
   margin-top: 0.2rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.74rem;
   font-weight: 300;
   color: rgba(255, 255, 255, 0.74);
@@ -868,7 +868,7 @@ main,
 
 .beat__tag {
   margin: 0 0 clamp(0.5rem, 1vw, 0.8rem);
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.28em;
@@ -901,7 +901,7 @@ main,
 
 .need__head {
   margin: 0 0 1.2rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.74rem;
   font-weight: 400;
   letter-spacing: 0.22em;
@@ -1037,7 +1037,7 @@ main,
 }
 
 .shot__wait {
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.68rem;
   font-weight: 300;
   letter-spacing: 0.24em;
@@ -1083,7 +1083,7 @@ main,
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.82rem;
   font-weight: 300;
   letter-spacing: 0.04em;
@@ -1109,7 +1109,7 @@ main,
 .signup__label {
   display: block;
   margin-bottom: 0.6rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.72rem;
   font-weight: 300;
   letter-spacing: 0.2em;
@@ -1156,7 +1156,7 @@ main,
 .signup__submit {
   flex: 0 0 auto;
   padding: 0.95rem 1.9rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1324,7 +1324,7 @@ main,
 
 .demo__play {
   padding: 0.85rem 2rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1381,7 +1381,7 @@ main,
 
 .demo__cta {
   padding: 0.8rem 1.6rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.78rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1394,7 +1394,7 @@ main,
 
 .demo__again {
   padding: 0.8rem 1.6rem;
-  font-family: var(--micro), sans-serif;
+  font-family: var(--micro), serif;
   font-size: 0.78rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;

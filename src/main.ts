@@ -437,7 +437,7 @@ function wireDemo() {
     void player.play().catch(() => undefined);
   });
 
-  // The markup only preloads metadata; opening the overlay fetches the audio.
+  // The markup preloads nothing; opening the overlay fetches the audio.
   // Once only: `load()` resets the element and would cut off a reopen.
   let warmed = false;
   const warmAudio = () => {

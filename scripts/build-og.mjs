@@ -4,23 +4,15 @@
  *
  * It reads the hero's layers and their depths out of index.html, their art out
  * of assets/svg, their tints and lifts and the sky out of src/style.css, and the
- * wordmark out of assets/logo-letters.svg — including the Cinzel Decorative
- * woff2 that is already embedded there as a data URI — and writes a single
- * self-contained scripts/og.svg.
+ * wordmark out of assets/logo-letters.svg, and writes a single self-contained
+ * scripts/og.svg.
  *
  *   node scripts/build-og.mjs           # writes scripts/og.svg
  *
- * Rasterising to public/og.png is a separate step because it needs a renderer.
- * Use a browser, which honours the embedded @font-face:
+ * Rasterising to public/og.png is a separate step because it needs a renderer:
  *
  *   chrome --headless --hide-scrollbars --window-size=1200,630 \
  *     --screenshot=public/og.png file://$PWD/scripts/og.svg
- *
- * The font is also embedded under the name fontconfig reports for the file
- * ("Cinzel Decorative Black"), because other SVG rasterisers resolve families
- * through fontconfig rather than through the @font-face rule, and the mismatch
- * is what silently replaced the wordmark with a default serif in an earlier
- * card.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -99,27 +91,10 @@ ${art}    </g>
   .join('\n');
 
 // --- the wordmark ----------------------------------------------------------
-const fontFaces = logo.match(/@font-face\{[^}]*}/g);
-if (!fontFaces?.length) throw new Error('no @font-face found in logo-letters.svg');
-
-// Same bytes, re-declared under the fontconfig family name.
-const FC_NAME = 'Cinzel Decorative Black';
-const faces = [
-  ...fontFaces,
-  ...fontFaces.map((f) => f.replace(/font-family:'[^']*'/, `font-family:'${FC_NAME}'`)),
-].join('\n');
-
-// Everything after the logo's own <defs>, minus its closing tag: the layered
-// shadow / groove / rim treatment that makes the wordmark what it is.
-const logoBody = logo
-  .replace(/^[\s\S]*?<\/defs>/, '')
-  .replace(/<\/svg>\s*$/, '')
-  .replace(/font-family="'Cinzel Decorative',serif"/g, `font-family="'${FC_NAME}','Cinzel Decorative',serif"`);
-
-const logoDefs = logo
-  .match(/<defs>([\s\S]*?)<\/defs>/)[1]
-  .replace(/<style[\s\S]*?<\/style>/, '')
-  .replace(/font-family="'Cinzel Decorative',serif"/g, `font-family="'${FC_NAME}','Cinzel Decorative',serif"`);
+// The logo's own defs and everything after them: the layered shadow / groove /
+// rim treatment that makes the wordmark what it is.
+const logoDefs = logo.match(/<defs>([\s\S]*?)<\/defs>/)[1];
+const logoBody = logo.replace(/^[\s\S]*?<\/defs>/, '').replace(/<\/svg>\s*$/, '');
 
 // --- composition -----------------------------------------------------------
 // An OG card is 1200x630 (40:21). The scene keeps its full width, so this is a
@@ -146,7 +121,6 @@ const out = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 ${VIEW_Y} ${ART_W} ${VIEW_H}"
      role="img" aria-label="${ALT}">
   <defs>
-    <style type="text/css">${faces}</style>
     <linearGradient id="og-sky" x1="0" y1="0" x2="0" y2="1">${skyStops}</linearGradient>
     <radialGradient id="og-shade">
       <stop offset="0%" stop-color="rgb(10,26,38)" stop-opacity="0.72"/>

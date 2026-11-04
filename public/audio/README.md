@@ -9,8 +9,8 @@ whatever is playing.
 
 Two things worth knowing about how it loads:
 
-- The element is `preload="metadata"`, so the page costs only the header.
-  `src/main.ts` fetches the audio when the overlay opens, and plays it in the
+- The element is `preload="none"`, so the page costs nothing until it is asked
+  for. `src/main.ts` fetches the audio when the overlay opens, and plays it in the
   same breath. Anything much larger than this will be felt in that gap, which
   the transport covers with a "Starting…" label and, if the buffer later runs
   dry, "Buffering…".
