@@ -350,6 +350,9 @@ main,
 .layer--dorado-2 {
   --art: url('../assets/svg/dorado_2.svg');
 }
+.layer--terra-1 {
+  --art: url('../assets/svg/terra_firme_1.svg');
+}
 .layer--terra-3 {
   --art: url('../assets/svg/terra_firme_3.svg');
 }
@@ -389,7 +392,8 @@ main,
 
 .stretch--how .layer--terra-5 { --tint: #5c8467; }
 .stretch--how .layer--terra-4 { --tint: #3d6a51; }
-.stretch--how .layer--terra-3 { --tint: #22443f; }
+.stretch--how .layer--terra-3 { --tint: #2f5748; }
+.stretch--how .layer--terra-1 { --tint: #22443f; }
 
 .stretch--beta .layer--basecamp-1 { --tint: #3a3b56; }
 .stretch--beta .layer--basecamp-3 { --tint: #20293a; }
@@ -443,6 +447,18 @@ main,
   opacity: 0.7;
 }
 
+/* The art runs off the top of this scene, against the gradient that ends the
+   stretch above: the shade darkens the canopy there and sky shows through its
+   gaps, so both would stop in a hard line. They start from that gradient's
+   last colour instead. */
+.stretch--how .vista__scene::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: clamp(8rem, 24vh, 16rem);
+  background: linear-gradient(180deg, var(--from), transparent);
+}
+
 .vista__shade--deep {
   opacity: 0.8;
 }
@@ -465,6 +481,18 @@ main,
   font-size: clamp(1.05rem, 1.7vw, 1.35rem);
   color: rgba(255, 255, 255, 0.94);
   text-shadow: var(--lift-1);
+}
+
+/* Where #beta lands: the marker sits at the sentence's vertical centre, and the
+   margin brings that point to the middle of the screen. */
+.vista--beta .vista__line {
+  position: relative;
+}
+
+.vista__anchor {
+  position: absolute;
+  top: 50%;
+  scroll-margin-top: 50svh;
 }
 
 .vista__act {
