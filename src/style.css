@@ -335,22 +335,29 @@ main,
   background: var(--tint);
   -webkit-mask-image: var(--art), -webkit-linear-gradient(180deg, #000, #000);
   mask-image: var(--art), linear-gradient(180deg, #000, #000);
-  -webkit-mask-size: 100% auto, 100% 100%;
-  mask-size: 100% auto, 100% 100%;
+  -webkit-mask-size: calc(100% * var(--scale, 1)) auto, 100% 100%;
+  mask-size: calc(100% * var(--scale, 1)) auto, 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-position: 0 calc(var(--art-h) * var(--lift, 0) * -1),
-    0 calc(var(--art-h) * (0.77 - var(--lift, 0)));
-  mask-position: 0 calc(var(--art-h) * var(--lift, 0) * -1),
-    0 calc(var(--art-h) * (0.77 - var(--lift, 0)));
+  -webkit-mask-position: 50% calc(var(--art-h) * (var(--ground, 0) * (1 - var(--scale, 1)) - var(--lift, 0))),
+    0 calc(var(--art-h) * (var(--ground, 0.77) - var(--lift, 0)));
+  mask-position: 50% calc(var(--art-h) * (var(--ground, 0) * (1 - var(--scale, 1)) - var(--lift, 0))),
+    0 calc(var(--art-h) * (var(--ground, 0.77) - var(--lift, 0)));
 }
 
 
+/* El Dorado stands further off than the canvas it was drawn on: --scale shrinks
+   the art toward the middle of its ground line, --ground (a share of the
+   canvas), and the solid ground starts there so it still runs the full width. */
 .layer--dorado-1 {
   --art: url('../assets/svg/dorado_1.svg');
+  --scale: 0.75;
+  --ground: 0.718;
 }
 .layer--dorado-2 {
   --art: url('../assets/svg/dorado_2.svg');
+  --scale: 0.75;
+  --ground: 0.718;
 }
 .layer--terra-1 {
   --art: url('../assets/svg/terra_firme_1.svg');
@@ -406,9 +413,10 @@ main,
    than they look: they also cover the grounds that are drawn lower than the
    front layer's, and the parallax, which by the time the ground is on screen
    has carried each nearer layer up over the one behind it. */
-.stretch--hero .layer--dorado-1 { --lift: 0.14; }
-.stretch--hero .layer--dorado-2 { --lift: 0.12; }
-.stretch--hero .mist { --lift: 0.11; }
+/* El Dorado is the exception: low enough that terra firme 3 hides its ground at
+   every point of the scroll, so it rises straight out of the foliage. */
+.stretch--hero .layer--dorado-1 { --lift: 0.09; }
+.stretch--hero .layer--dorado-2 { --lift: 0.09; }
 .stretch--hero .layer--terra-3 { --lift: 0.124; }
 .stretch--hero .layer--terra-4 { --lift: 0.09; }
 
