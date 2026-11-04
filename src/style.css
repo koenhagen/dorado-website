@@ -339,8 +339,10 @@ main,
   mask-size: 100% auto, 100% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-position: 0 0, 0 calc(var(--art-h) * 0.77);
-  mask-position: 0 0, 0 calc(var(--art-h) * 0.77);
+  -webkit-mask-position: 0 calc(var(--art-h) * var(--lift, 0) * -1),
+    0 calc(var(--art-h) * (0.77 - var(--lift, 0)));
+  mask-position: 0 calc(var(--art-h) * var(--lift, 0) * -1),
+    0 calc(var(--art-h) * (0.77 - var(--lift, 0)));
 }
 
 
@@ -399,12 +401,32 @@ main,
 .stretch--beta .layer--basecamp-3 { --tint: #20293a; }
 .stretch--beta .layer--basecamp-2 { --tint: #070c14; }
 
+/* Each layer stands higher than the one before it, as a share of the canvas,
+   so every ground shows as its own band above the next. The steps are larger
+   than they look: they also cover the grounds that are drawn lower than the
+   front layer's, and the parallax, which by the time the ground is on screen
+   has carried each nearer layer up over the one behind it. */
+.stretch--hero .layer--dorado-1 { --lift: 0.14; }
+.stretch--hero .layer--dorado-2 { --lift: 0.12; }
+.stretch--hero .mist { --lift: 0.11; }
+.stretch--hero .layer--terra-3 { --lift: 0.124; }
+.stretch--hero .layer--terra-4 { --lift: 0.09; }
+
+.stretch--how .mist { --lift: 0.13; }
+.stretch--how .layer--terra-5 { --lift: 0.117; }
+.stretch--how .layer--terra-4 { --lift: 0.125; }
+.stretch--how .layer--terra-3 { --lift: 0.084; }
+
+.stretch--beta .mist { --lift: 0.1; }
+.stretch--beta .layer--basecamp-1 { --lift: 0.1; }
+.stretch--beta .layer--basecamp-3 { --lift: 0.045; }
+
 /* Valley mist: an actual band of air, not a blur filter. */
 .mist {
   position: absolute;
   left: -10%;
   right: -10%;
-  top: calc(var(--art-h) * 0.6);
+  top: calc(var(--art-h) * (0.6 - var(--lift, 0)));
   height: calc(var(--art-h) * 0.13);
   background: linear-gradient(
     180deg,

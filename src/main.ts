@@ -460,8 +460,54 @@ function wireDemo() {
   toBeta?.addEventListener('click', () => overlay.hide());
 }
 
+/* --- anchor scrolling ---
+   `scroll-behavior: smooth` has no speed setting, so clicks on in-page links
+   are animated here, at twice the time Chrome's own smooth scroll takes. That
+   CSS still serves a page opened directly on a #hash. Reduced motion is left
+   to the browser, which jumps. */
+function slowAnchors() {
+  if (reduceMotion) return;
+
+  let frame = 0;
+  const stop = () => cancelAnimationFrame(frame);
+
+  // The visitor's own scrolling wins over the animation.
+  window.addEventListener('wheel', stop, { passive: true });
+  window.addEventListener('touchstart', stop, { passive: true });
+
+  document.addEventListener('click', (event) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!(event.target instanceof Element)) return;
+    const link = event.target.closest<HTMLAnchorElement>('a[href^="#"]');
+    const hash = link?.getAttribute('href');
+    const target = hash ? document.getElementById(hash.slice(1)) : null;
+    if (!hash || !target) return;
+    event.preventDefault();
+
+    const from = window.scrollY;
+    const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    const end = target.getBoundingClientRect().top + from - margin;
+    const to = Math.min(end, document.documentElement.scrollHeight - window.innerHeight);
+    const distance = to - from;
+    const duration = 1100 + Math.abs(distance) * 0.245;
+    const start = performance.now();
+
+    stop();
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+      window.scrollTo({ top: from + distance * eased, behavior: 'instant' });
+      if (t < 1) frame = requestAnimationFrame(step);
+      // Already in place, so this only records the hash and moves focus there.
+      else location.hash = hash;
+    };
+    frame = requestAnimationFrame(step);
+  });
+}
+
 spreadCopy();
 startParallax();
 startReveals();
 wireForm();
 wireDemo();
+slowAnchors();
