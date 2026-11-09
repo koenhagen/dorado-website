@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Plain text pages: /about, /privacy, /terms.
+   Borrows everything from style.css; only the reading column is here. No
+   vista: a plain page of text on the ink ground, under the same rim.
+   ========================================================================== */
+
+@import './style.css';
+
+.legal {
+  padding: clamp(7rem, 14vw, 10rem) var(--gutter) var(--rhythm);
+}
+
+.legal__body {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.legal__body .eyebrow {
+  color: var(--paper-faint);
+  text-shadow: none;
+}
+
+.legal__lede {
+  margin: clamp(1.4rem, 3vw, 2rem) 0 clamp(2.5rem, 5vw, 3.5rem);
+  font-size: clamp(1.1rem, 1.6vw, 1.25rem);
+  color: var(--paper);
+}
+
+.legal__body h2 {
+  margin: clamp(2.2rem, 4vw, 3rem) 0 0.6rem;
+  padding-top: clamp(1.4rem, 2.5vw, 1.8rem);
+  border-top: 1px solid var(--hair);
+  font-family: var(--display), serif;
+  font-size: clamp(1.35rem, 2.2vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--paper);
+}
+
+.legal__body p {
+  margin: 0 0 1em;
+  color: var(--paper-dim);
+}
+
+.legal__body a {
+  color: var(--gold);
+  text-underline-offset: 0.2em;
+}

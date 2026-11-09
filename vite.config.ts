@@ -28,6 +28,9 @@ function thanksWithoutTheSlash(): Plugin {
 // One landing page: The Open Basin, at the root. The six earlier directions
 // and the chooser that indexed them have been retired.
 //
+// Plus /about, /privacy and /terms, the plain text pages linked from every
+// footer. They share src/page.css.
+//
 // Plus /thanks, where the confirmation link in the beta mail lands. It is an
 // entry rather than a file in /public so it can share the built stylesheet and
 // the hashed font and image assets.
@@ -39,6 +42,9 @@ export default defineConfig({
       input: {
         main: here('index.html'),
         thanks: here('thanks/index.html'),
+        about: here('about/index.html'),
+        privacy: here('privacy/index.html'),
+        terms: here('terms/index.html'),
       },
     },
   },

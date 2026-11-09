@@ -1206,7 +1206,7 @@ main,
 .foot {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
   padding: clamp(2.5rem, 5vw, 4rem) var(--gutter);
@@ -1214,11 +1214,27 @@ main,
   background: var(--ink);
 }
 
-.foot__note {
-  margin: 0;
-  max-width: 52ch;
+/* One footer on every page: wordmark, legal links, carbon badge. */
+.foot__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  margin-right: auto;
+}
+
+.foot__links a {
   font-size: 0.9rem;
   color: var(--paper-faint);
+  text-decoration: none;
+  transition: color 220ms ease;
+}
+
+.foot__links a:hover {
+  color: var(--paper);
+}
+
+.foot__links a[aria-current='page'] {
+  color: var(--paper-dim);
 }
 
 /* ============================== THE DEMO ============================== */
