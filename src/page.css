@@ -46,3 +46,197 @@
   color: var(--gold);
   text-underline-offset: 0.2em;
 }
+
+/* Anchored sections (the terms' contents list) land clear of the rim. */
+.legal__body h2[id] {
+  scroll-margin-top: 6rem;
+}
+
+.legal__body ul,
+.legal__body ol {
+  margin: 0 0 1em;
+  padding-left: 1.4em;
+  color: var(--paper-dim);
+}
+
+.legal__body li {
+  margin-bottom: 0.45em;
+  padding-left: 0.2em;
+}
+
+.legal__body li::marker {
+  color: var(--paper-faint);
+}
+
+.legal__roman {
+  list-style-type: lower-roman;
+}
+
+/* Clause numbers: quieter than the text, so the eye reads the clause. */
+.legal__clause {
+  margin-right: 0.5em;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper-faint);
+}
+
+.legal__toc ol {
+  columns: 2 16rem;
+  column-gap: 2rem;
+}
+
+.legal__toc li {
+  break-inside: avoid;
+}
+
+.legal__toc a {
+  text-decoration: none;
+}
+
+.legal__toc a:hover {
+  text-decoration: underline;
+}
+
+.legal__address {
+  margin: 0 0 1em;
+  font-style: normal;
+  color: var(--paper-dim);
+}
+
+.legal__credit {
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  font-size: 0.85rem;
+}
+
+.legal__body .legal__credit {
+  color: var(--paper-faint);
+}
+
+/* Subsections inside a numbered section (privacy statement). */
+.legal__body h3 {
+  margin: 1.8rem 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--paper);
+}
+
+.legal__body h3[id] {
+  scroll-margin-top: 6rem;
+}
+
+.legal__body strong {
+  font-weight: 600;
+  color: var(--paper);
+}
+
+/* "In short" summaries: set off by a rule so a skimmer reads only these. */
+.legal__body .legal__short {
+  padding-left: 1rem;
+  border-left: 2px solid var(--gold-deep);
+  font-style: italic;
+}
+
+.legal__body .legal__short strong {
+  font-style: normal;
+}
+
+.legal__defs {
+  margin: 0 0 1em;
+  color: var(--paper-dim);
+}
+
+.legal__defs dt {
+  color: var(--paper);
+}
+
+.legal__defs dd {
+  margin: 0 0 0.6em 1.2em;
+}
+
+/* The US categories table scrolls inside itself on a phone, never the page. */
+.legal__table-wrap {
+  margin: 0 0 1.4em;
+  overflow-x: auto;
+}
+
+.legal__table {
+  width: 100%;
+  min-width: 32rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  color: var(--paper-dim);
+}
+
+.legal__table th,
+.legal__table td {
+  padding: 0.7em 0.8em 0.7em 0;
+  border-bottom: 1px solid var(--hair);
+  text-align: left;
+  vertical-align: top;
+}
+
+.legal__table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  border-bottom-color: var(--hair-strong);
+}
+
+.legal__table tbody th {
+  width: 30%;
+  font-weight: 600;
+  color: var(--paper);
+}
+
+.legal__table td:last-child {
+  width: 5rem;
+  padding-right: 0;
+}
+
+.legal__table .legal__yes {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* Privacy requests on /contact: each one a ready-made email, set as a
+   list of plain rows so they read as choices, not as body text. */
+.legal__body .legal__requests {
+  margin: 0 0 1.2em;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hair);
+}
+
+.legal__requests li {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--hair);
+}
+
+.legal__requests a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85em 0.2em;
+  text-decoration: none;
+}
+
+.legal__requests a::after {
+  content: '→';
+  color: var(--paper-faint);
+  transition: transform 220ms ease, color 220ms ease;
+}
+
+.legal__requests a:hover::after,
+.legal__requests a:focus-visible::after {
+  color: var(--gold);
+  transform: translateX(0.25em);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal__requests a::after {
+    transition: none;
+  }
+}

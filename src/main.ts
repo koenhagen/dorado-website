@@ -2,6 +2,7 @@ import './style.css';
 import { DemoOverlay } from './lib/demo-overlay';
 import { WaveformRenderer } from './lib/waveform';
 import { DemoPlayer, formatTime, type DemoFrame } from './lib/player';
+import { track, trackTimeOnPage } from './lib/analytics';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -337,14 +338,19 @@ function wireForm() {
       const payload = (await response.json().catch(() => null)) as { error?: string } | null;
 
       if (!response.ok) {
+        track('beta-signup-failed', { reason: `http-${response.status}` });
         return fail(payload?.error ?? 'That address did not go through. Try again in a moment.');
       }
 
+      // The confirmation mail is out; a click on its link lands on /thanks,
+      // so /thanks page views count the confirmed signups.
+      track('beta-signup');
       form.hidden = true;
       done.hidden = false;
       done.setAttribute('tabindex', '-1');
       done.focus();
     } catch {
+      track('beta-signup-failed', { reason: 'network' });
       fail('We could not reach the list. Check your connection and try again.');
     } finally {
       sending = false;
@@ -381,11 +387,23 @@ function wireDemo() {
     return wave;
   };
 
+  // How far people listen: each mark is sent once per page view, however
+  // often the demo is replayed or scrubbed back.
+  const marks = [25, 50, 75];
+  const reached = new Set<number>();
+
   const player = new DemoPlayer({
     audio,
 
     onFrame: (frame: DemoFrame) => {
       meter.style.setProperty('--fill', frame.progress.toFixed(4));
+
+      for (const mark of marks) {
+        if (frame.progress * 100 >= mark && !reached.has(mark)) {
+          reached.add(mark);
+          track('demo-progress', { percent: mark });
+        }
+      }
 
       wave?.push(frame.samples);
 
@@ -407,6 +425,10 @@ function wireDemo() {
         now.textContent = 'Buffering…';
         wave?.stop();
       } else if (state === 'ended') {
+        if (!reached.has(100)) {
+          reached.add(100);
+          track('demo-complete');
+        }
         label.textContent = 'Play again';
         now.textContent = 'The jungle has gone quiet.';
         meter.style.setProperty('--fill', '1');
@@ -456,6 +478,7 @@ function wireDemo() {
     ].filter((el): el is HTMLElement => el !== null),
     siblings: Array.from(document.querySelectorAll<HTMLElement>('.rim, main, .foot')),
     onOpen: () => {
+      track('demo-open');
       ensureWave();
       warmAudio();
       if (player.state === 'idle' || player.state === 'ended') {
@@ -474,7 +497,10 @@ function wireDemo() {
     onClose: () => player.pause(),
   });
 
-  toBeta?.addEventListener('click', () => overlay.hide());
+  toBeta?.addEventListener('click', () => {
+    track('demo-to-beta');
+    overlay.hide();
+  });
 }
 
 /* --- anchor scrolling ---
@@ -528,3 +554,4 @@ startReveals();
 wireForm();
 wireDemo();
 slowAnchors();
+trackTimeOnPage();

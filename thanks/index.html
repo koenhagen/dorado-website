@@ -31,6 +31,9 @@
     <meta name="theme-color" content="#0b1517"/>
 
     <link rel="stylesheet" href="../src/thanks.css"/>
+    <!-- Analytics: Umami, cookieless. Only counts on dorado.run, never on a
+         local dev server. Events are sent from src/lib/analytics.ts. -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="e5772ca2-7268-4e6e-9ea6-710dc0a8d4f4" data-domains="dorado.run"></script>
 </head>
 <body>
 <header class="rim">
@@ -179,21 +182,6 @@
     </section>
 </main>
 
-<footer class="foot">
-    <img
-            class="wordmark wordmark--foot"
-            src="../assets/logo-letters.svg"
-            alt="Dorado"
-    />
-    <nav class="foot__links" aria-label="About and legal">
-        <a href="/about/">About</a>
-        <a href="/privacy/">Privacy statement</a>
-        <a href="/terms/">Terms of use</a>
-    </nav>
-    <div class="foot__badge">
-        <div id="wcb" class="carbonbadge wcb-d"></div>
-        <script src="https://unpkg.com/website-carbon-badges@1.1.3/b.min.js" defer></script>
-    </div>
-</footer>
+<!-- @include footer -->
 </body>
 </html>

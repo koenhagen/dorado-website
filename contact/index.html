@@ -1,0 +1,113 @@
+<!doctype html>
+<!--
+  /contact — how to reach us, and how to make a privacy request. The privacy
+  statement points here ("dorado.run/contact") as the place to exercise your
+  rights, so the request links below must keep working.
+
+  No form: there is no backend for one. Each request is a mailto link with the
+  subject filled in, so requests arrive sorted.
+
+  A plain text page, sharing page.css with /about, /privacy and /terms.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+
+    <title>Contact — Dorado</title>
+    <meta
+            name="description"
+            content="Get in touch with the people behind Dorado, or ask to see, correct or delete your personal data."
+    />
+    <link rel="canonical" href="https://dorado.run/contact/"/>
+    <meta name="theme-color" content="#0b1517"/>
+
+    <link rel="stylesheet" href="../src/page.css"/>
+    <!-- Analytics: Umami, cookieless. Only counts on dorado.run, never on a
+         local dev server. Events are sent from src/lib/analytics.ts. -->
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="e5772ca2-7268-4e6e-9ea6-710dc0a8d4f4" data-domains="dorado.run"></script>
+</head>
+<body>
+<header class="rim">
+    <a class="rim__mark" href="/">
+        <img
+                class="rim__sun"
+                src="/android-chrome-192x192.png"
+                alt=""
+                aria-hidden="true"
+                width="192"
+                height="192"
+        />
+        <img
+                class="wordmark wordmark--rim"
+                src="../assets/logo-letters.svg"
+                alt="Dorado"
+        />
+    </a>
+</header>
+
+<main class="legal">
+    <article class="legal__body">
+        <p class="eyebrow">Contact</p>
+        <h1 class="display display--section">Get in touch</h1>
+
+        <p class="legal__lede">
+            Questions, feedback from a run, or something that isn’t working:
+            email us at <a href="mailto:info@dorado.run">info@dorado.run</a>.
+            A person reads every message.
+        </p>
+
+        <h2>Questions and feedback</h2>
+        <p>
+            Write to <a href="mailto:info@dorado.run">info@dorado.run</a> about
+            anything to do with Dorado: the app, the beta, or this website. If
+            something went wrong during a run, tell us what phone you use and
+            roughly when it happened, so we can find the problem faster.
+        </p>
+        <p>
+            Want to try Dorado before launch?
+            <a href="/#beta">Join the beta</a>.
+        </p>
+
+        <h2 id="privacy">Your personal data</h2>
+        <p>
+            You can ask to see the personal data we hold about you, to correct
+            it, to delete it, or to withdraw consent you gave us. Pick the
+            request below. It opens an email with the subject filled in.
+        </p>
+        <ul class="legal__requests">
+            <li>
+                <a href="mailto:info@dorado.run?subject=Privacy%20request%3A%20access%20my%20data">Request a copy of my data</a>
+            </li>
+            <li>
+                <a href="mailto:info@dorado.run?subject=Privacy%20request%3A%20correct%20my%20data">Correct my data</a>
+            </li>
+            <li>
+                <a href="mailto:info@dorado.run?subject=Privacy%20request%3A%20delete%20my%20data">Delete my data</a>
+            </li>
+            <li>
+                <a href="mailto:info@dorado.run?subject=Privacy%20request%3A%20withdraw%20consent">Withdraw my consent</a>
+            </li>
+        </ul>
+        <p>
+            Send the request from the email address you use for Dorado, so we
+            can confirm it’s you. If we can’t, we may ask for a little more
+            information before we act on it. We answer privacy requests within
+            one month.
+        </p>
+        <p>
+            The <a href="/privacy/">privacy statement</a> explains what we
+            collect, why, and the rights you have.
+        </p>
+
+        <p>KvK number 94860548.</p>
+    </article>
+</main>
+
+<!-- @include footer -->
+</body>
+</html>
