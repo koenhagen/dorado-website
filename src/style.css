@@ -329,10 +329,14 @@ main,
    would otherwise let the layer behind show along the scene's last edge,
    against a gradient in the front's colour. It starts below terra firme 3's
    flat ground (76.6%), so it never straightens a contour that is drawn. */
+/* The solid ground is a 1×1 black pixel stretched over the plane, not a
+   one-colour linear-gradient: Firefox's software renderer computes a gradient
+   per pixel on every frame the plane moves, whereas an image is drawn once. */
 .layer {
+  --solid: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==');
   background: var(--tint);
-  -webkit-mask-image: var(--art), -webkit-linear-gradient(180deg, #000, #000);
-  mask-image: var(--art), linear-gradient(180deg, #000, #000);
+  -webkit-mask-image: var(--art), var(--solid);
+  mask-image: var(--art), var(--solid);
   -webkit-mask-size: calc(100% * var(--scale, 1)) auto, 100% 100%;
   mask-size: calc(100% * var(--scale, 1)) auto, 100% 100%;
   -webkit-mask-repeat: no-repeat;
