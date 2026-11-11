@@ -285,8 +285,6 @@ main,
 }
 
 .vista__scene {
-  /* Planes are deliberately not promoted: one composited layer for the scene
-     is enough, and will-change on each plane is pure cost. */
   position: absolute;
   top: 0;
   left: 0;
@@ -315,7 +313,43 @@ main,
    scene, so each reaches further than that below it and its ground comes up
    with it. */
 .vista__scene .plane {
+  /* Overridden per plane from data-depth by startParallax. */
+  --depth: 1;
   bottom: -30%;
+}
+
+/* Each plane is a full-width SVG mask, which is costly to paint. While its
+   scene is on screen (data-live, set by startParallax) a plane gets its own
+   compositor layer, so moving it is a GPU translate of a mask already painted,
+   not a repaint of the whole scene every frame. Off screen it gives the
+   memory back. */
+.vista__scene[data-live] .plane {
+  will-change: transform;
+}
+
+/* Where the browser can drive the parallax from scroll itself, it does: the
+   transform then runs on the compositor in step with the scroll, with no
+   script per frame. Same curve as startParallax: from 0 as the vista's top
+   enters to the full spread as its bottom leaves, the spread being a quarter
+   of the scene (a plane is 130% of the scene, hence the / 1.3). */
+@supports (view-timeline: --vista block) {
+  .stretch {
+    view-timeline: --vista block;
+  }
+  .vista__scene .plane {
+    will-change: transform;
+    animation: rise linear both;
+    animation-timeline: --vista;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateY(calc(var(--depth) *-100% * 0.25 / 1.3));
+  }
 }
 
 /* The sky ends where the ground begins; below that the ground covers it. */

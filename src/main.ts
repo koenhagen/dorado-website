@@ -43,14 +43,18 @@ function startParallax() {
   for (const el of document.querySelectorAll<Movable>('.vista__scene')) {
     const frame = el.parentElement;
     if (!frame) continue;
-    const planes = Array.from(el.querySelectorAll<Movable>('[data-depth]')).map((node) => ({
-      el: node,
-      depth: Number(node.dataset.depth ?? 1),
-      written: '',
-    }));
+    const planes = Array.from(el.querySelectorAll<Movable>('[data-depth]')).map((node) => {
+      const depth = Number(node.dataset.depth ?? 1);
+      // Read by the scroll-driven `rise` animation in style.css.
+      node.style.setProperty('--depth', String(depth));
+      return { el: node, depth, written: '' };
+    });
     scenes.push({ el, frame, planes });
   }
   if (scenes.length === 0) return;
+
+  // The browser drives the planes from scroll on its own (see `rise`).
+  if (CSS.supports('view-timeline: --vista block')) return;
 
   /**
    * How far the near ground rises over the whole of its vista, as a share of
@@ -79,8 +83,14 @@ function startParallax() {
       for (const entry of entries) {
         const scene = byElement.get(entry.target);
         if (!scene) continue;
-        if (entry.isIntersecting) onScreen.add(scene);
-        else onScreen.delete(scene);
+        // data-live promotes the scene's planes to their own layers (style.css).
+        if (entry.isIntersecting) {
+          onScreen.add(scene);
+          scene.el.setAttribute('data-live', '');
+        } else {
+          onScreen.delete(scene);
+          scene.el.removeAttribute('data-live');
+        }
       }
       schedule();
     },
@@ -110,8 +120,7 @@ function startParallax() {
       });
     }
 
-    // Write pass. A plane is not its own compositor layer — touching one
-    // invalidates the whole scene — so unchanged values are left alone.
+    // Write pass. Unchanged values are left alone.
     for (const { scene, spread } of readings) {
       for (const plane of scene.planes) {
         const transform = `translateY(${(spread * plane.depth).toFixed(2)}px)`;
